@@ -14,13 +14,16 @@ func handleConnection(connection net.Conn) {
 	if err != nil {
 		return
 	}
+	log.Println("Connection on 127.0.0.1:2719 from: " + connection.LocalAddr().String())
+	log.Println(input)
+
 	var body string
 	var status string
 	input = strings.TrimSpace(input)
 	switch input {
 	case "/home":
 		status = "200 OK"
-		body = "Welcome to penguin net: " + connection.RemoteAddr().String()
+		body = "Welcome to penguin net: " + connection.RemoteAddr().String() + "\n"
 	default:
 		status = "404 NOT FOUND"
 		body = "unknown command: " + input + "\n"
