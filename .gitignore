@@ -19,6 +19,9 @@ go.work.sum
 # Env / secrets
 .env
 
+# DNS registry — real entries stay local, commit the template only
+registry.json
+
 # md
 *.md
 !README.md

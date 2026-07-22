@@ -34,14 +34,43 @@ func parseInput(input string) (ip string, request string, err error){
 
 	uriBody := strings.SplitN(inputWithoutProto, "/", 2);
 	host := uriBody[0];
-	if !strings.Contains(host, ":") {
-		host = host + ":2719";
-	}
 	path := "/home";
 	if len(uriBody) > 1 && uriBody[1] != "" {
 		path = "/" + uriBody[1];
 	}
 	return host, path, nil;
+}
+
+func resolveDns(host string) (resolvedIp string, err error) {
+	bareHost := host
+	port := "2719"
+	if strings.Contains(host, ":") {
+		parts := strings.SplitN(host, ":", 2)
+		bareHost = parts[0]
+		port = parts[1]
+	}
+
+	if net.ParseIP(bareHost) != nil {
+		return bareHost + ":" + port, nil
+	}
+
+	dnsConn, err := net.Dial("tcp", "127.0.0.1:7007")
+	if err != nil {
+		return "", errors.New("Pengo DNS server is not responding")
+	}
+	dnsConn.Write([]byte(bareHost + "\n"))
+	response, err := io.ReadAll(dnsConn)
+	resolved := parseDnsResponse(string(response))
+	return resolved, nil
+}
+
+func parseDnsResponse(response string) string {
+	lines := strings.Split(response, "\n")
+	status := strings.TrimSpace(lines[0])
+	if !strings.HasPrefix(status, "200") || len(lines) < 2 {
+		return ""
+	}
+	return strings.TrimSpace(lines[1])
 }
 
 func main() {
@@ -52,10 +81,15 @@ func main() {
 		log.Println(err);
 	}
 
-	ip, request, err := parseInput(input);
+	host, request, err := parseInput(input);
 	if err != nil {
 		log.Fatalln(err)
 	}
-	response := makeRequest(ip, request)
+	resolvedIp, err := resolveDns(host)
+	if err != nil {
+		log.Println(err)
+		return;
+	}
+	response := makeRequest(resolvedIp, request)
 	fmt.Print(response)
 }
