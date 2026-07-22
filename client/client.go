@@ -18,22 +18,30 @@ func makeRequest(ip string, request string) string {
 	if err != nil {
 		log.Fatalln("Couldn't connect to the pengo server on " + ip + "\n");
 	}
-	connection.Write([]byte(request));
+	connection.Write([]byte(request + "\n"));
 	response, err := io.ReadAll(connection);
 	return string(response)
 }
 
 func parseInput(input string) (ip string, request string, err error){
-	normalizedInput := strings.ToLower(input);
+	normalizedInput := strings.TrimSpace(strings.ToLower(input));
 	proto := strings.Split(normalizedInput, "://")[0];
 	inputWithoutProto := strings.Replace(normalizedInput, proto + "://", "", -1);
 	if (proto != "pengo") {
 		err := "Requested URI is not a Pengo URI";
-		return "", "", errors.New(err); 
+		return "", "", errors.New(err);
 	}
 
-	uriBody := strings.Split(inputWithoutProto, "/");
-	return uriBody[0], "/" + uriBody[1], nil;
+	uriBody := strings.SplitN(inputWithoutProto, "/", 2);
+	host := uriBody[0];
+	if !strings.Contains(host, ":") {
+		host = host + ":2719";
+	}
+	path := "/home";
+	if len(uriBody) > 1 && uriBody[1] != "" {
+		path = "/" + uriBody[1];
+	}
+	return host, path, nil;
 }
 
 func main() {
