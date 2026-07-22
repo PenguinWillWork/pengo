@@ -1,0 +1,20 @@
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary and coverage
+*.test
+*.out
+
+# Build output
+/bin/
+/dist/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Env / secrets
+.env
