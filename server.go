@@ -1,15 +1,33 @@
 package main
 
 import (
-	"io"
+	"bufio"
 	"log"
 	"net"
+	"strings"
 )
 
 func handleConnection(connection net.Conn) {
-	log.Println(connection.RemoteAddr(), ": Says hello")
-	io.Copy(connection, connection)
-	connection.Close()
+	defer connection.Close()
+	reader := bufio.NewReader(connection)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		return
+	}
+	var body string
+	var status string
+	input = strings.TrimSpace(input)
+	switch input {
+	case "/home":
+		status = "200 OK"
+		body = "Welcome to penguin net: " + connection.RemoteAddr().String()
+	default:
+		status = "404 NOT FOUND"
+		body = "unknown command: " + input + "\n"
+
+	}
+	response := "PENGO/0.1 " + status + "\n" + body
+	connection.Write([]byte(response))
 }
 
 func main() {
@@ -17,7 +35,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		log.Println("Listening on 127.0.0.1:2719");
+		log.Println("Listening on 127.0.0.1:2719")
 	}
 	defer listener.Close()
 
@@ -30,5 +48,4 @@ func main() {
 		go handleConnection(conn)
 	}
 
-	
 }
