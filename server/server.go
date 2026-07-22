@@ -34,11 +34,11 @@ func handleConnection(connection net.Conn) {
 }
 
 func main() {
-	listener, err := net.Listen("tcp", "127.0.0.1:2719")
+	listener, err := net.Listen("tcp", ":2719")
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		log.Println("Listening on 127.0.0.1:2719")
+		log.Println("Listening on " + listener.Addr().String())
 	}
 	defer listener.Close()
 
