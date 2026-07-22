@@ -25,6 +25,7 @@ func resolveDnsRequest(connection net.Conn, registry map[string]string) {
 	domain := strings.TrimSpace(strings.ToLower(input))
 	log.Println(requester + " is resolving " + domain)
 
+	//look-up dns registry for domain passed by user
 	ip, found := registry[domain]
 	var response string
 	if found {
@@ -38,6 +39,7 @@ func resolveDnsRequest(connection net.Conn, registry map[string]string) {
 }
 
 func main() {
+	//read registry file
 	file, err := os.Open("registry.json")
 	if err != nil {
 		log.Fatalln(err)
@@ -45,6 +47,7 @@ func main() {
 	defer file.Close()
 
 	var registry map[string]string
+	//decode registry json
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&registry)
 	if err != nil {
@@ -52,6 +55,7 @@ func main() {
 	}
 	log.Printf("loaded %d records from registry.json", len(registry))
 
+	//create dns server listener on 7007
 	listener, err := net.Listen("tcp", ":7007")
 	if err != nil {
 		log.Fatalln(err)

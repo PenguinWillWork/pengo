@@ -41,6 +41,7 @@ func parseInput(input string) (ip string, request string, err error){
 	return host, path, nil;
 }
 
+//resolving dns by domain name input, if already and ip -> return ip. Otherwise dial dns server 
 func resolveDns(host string) (resolvedIp string, err error) {
 	bareHost := host
 	port := "2719"
@@ -60,6 +61,7 @@ func resolveDns(host string) (resolvedIp string, err error) {
 	}
 	dnsConn.Write([]byte(bareHost + "\n"))
 	response, err := io.ReadAll(dnsConn)
+	//extract ip from the dns server response -> assign to resolved
 	resolved := parseDnsResponse(string(response))
 	return resolved, nil
 }
@@ -67,9 +69,11 @@ func resolveDns(host string) (resolvedIp string, err error) {
 func parseDnsResponse(response string) string {
 	lines := strings.Split(response, "\n")
 	status := strings.TrimSpace(lines[0])
+	//checking if first line is 200
 	if !strings.HasPrefix(status, "200") || len(lines) < 2 {
 		return ""
 	}
+	//returning second line since we already checked it should be an IP
 	return strings.TrimSpace(lines[1])
 }
 
