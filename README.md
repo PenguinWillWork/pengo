@@ -38,7 +38,7 @@ Typing `pengo://welcome`:
 
 ```
 frontend  → hands the address to the Go backend
-backend   → splits into host (welcome) + path (/home)
+backend   → splits into host (welcome) + path (e.g. /home, if any)
           → asks DNS :7007 where welcome is  → 127.0.0.1:2719
           ← response comes back
 frontend  ← renders it
