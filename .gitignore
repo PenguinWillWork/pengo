@@ -4,6 +4,16 @@
 *.so
 *.dylib
 
+# Compiled Go binaries (Linux/macOS executables have no extension)
+/cmd/client/client
+/cmd/server/server
+/cmd/dns/dns
+
+# Same binaries when built from the repo root (go build ./cmd/...)
+/client
+/server
+/dns
+
 # Test binary and coverage
 *.test
 *.out
