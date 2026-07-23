@@ -8,13 +8,14 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type PengoResponse struct {
 	Version string
 	Status string
-	ContentLength string
+	ContentLength int
 	Body  string
 }
 
@@ -46,10 +47,17 @@ func parsePengoResponse(response string) (parsedResponse PengoResponse, err erro
 		}
 		switch header {
 		case "Content-Length":
-			parsedResponse.ContentLength = value;
+			length, err := strconv.Atoi(value)
+			if err != nil {
+				return PengoResponse{}, errors.New("malformed Content-Length: " + value)
+			}
+			parsedResponse.ContentLength = length
 		}
 	}
-	parsedResponse.Body = strings.TrimSpace(body);
+	if len(body) < parsedResponse.ContentLength {
+		return PengoResponse{}, errors.New("truncated body: fewer bytes thanContent-Length promised")
+	}
+	parsedResponse.Body = body
 	return parsedResponse, nil;
 }
 

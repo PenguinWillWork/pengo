@@ -33,13 +33,13 @@ func handleConnection(connection net.Conn) {
 	connection.Write([]byte(response))
 }
 
-//standartizing response.. statuses need some structuring and the whole function requires some sanitizing before blindly appending things to the response i guess
+// standartizing response.. statuses need some structuring and the whole function requires some sanitizing before blindly appending things to the response i guess
 func makeResponse(status string, body string) string {
-      proto := "PENGO/0.1"
-      contentLength := len(body)
-      return proto + "\n" + status + "\n" +
-              "Content-Length:" + strconv.Itoa(contentLength) + "\n\n" +
-              body
+	proto := "PENGO/0.1"
+	contentLength := len(body)
+	return proto + "\n" + status + "\n" +
+		"Content-Length:" + strconv.Itoa(contentLength) + "\n\n" +
+		body
 }
 
 func main() {
