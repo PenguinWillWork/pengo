@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"net"
+	"strconv"
 	"strings"
 )
 
@@ -27,10 +28,18 @@ func handleConnection(connection net.Conn) {
 	default:
 		status = "404 NOT FOUND"
 		body = "unknown command: " + input + "\n"
-
 	}
-	response := "PENGO/0.1 " + status + "\n" + body
+	response := makeResponse(status, body)
 	connection.Write([]byte(response))
+}
+
+//standartizing response.. statuses need some structuring and the whole function requires some sanitizing before blindly appending things to the response i guess
+func makeResponse(status string, body string) string {
+      proto := "PENGO/0.1"
+      contentLength := len(body)
+      return proto + "\n" + status + "\n" +
+              "Content-Length:" + strconv.Itoa(contentLength) + "\n\n" +
+              body
 }
 
 func main() {

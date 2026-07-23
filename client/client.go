@@ -11,8 +11,49 @@ import (
 	"strings"
 )
 
+type PengoResponse struct {
+	Version string
+	Status string
+	ContentLength string
+	Body  string
+}
 
-func makeRequest(ip string, request string) string {
+func parsePengoResponse(response string) (parsedResponse PengoResponse, err error) {
+	//separating head from the body
+	head, body, found := strings.Cut(response, "\n\n");
+	
+	//if not found -> error
+	if !found {
+		return PengoResponse{}, errors.New("The response that we got from the host is malformed: no header to body separator")
+	}
+	//chopping the headers
+	headers := strings.Split(head, "\n");
+	//if it ends up having less headers than needed (should at least have version, status, length lines) -> error
+	if len(headers) < 3 {
+		return PengoResponse{}, errors.New("The response that we got from the host is malformed: some headers are missing")
+	} 
+	//first two lines are by default version and status
+	parsedResponse.Version = headers[0]
+	parsedResponse.Status = headers[1];
+	for i, h := range headers {
+		//skip first 2 hearders - already asigned
+		if i < 2 {
+			continue;
+		}
+		header, value, found := strings.Cut(h, ":");
+		if !found {
+			return PengoResponse{}, errors.New("The response that we got from the host is malformed: some headers are missing")
+		}
+		switch header {
+		case "Content-Length":
+			parsedResponse.ContentLength = value;
+		}
+	}
+	parsedResponse.Body = strings.TrimSpace(body);
+	return parsedResponse, nil;
+}
+
+func makeRequest(ip string, request string) (PengoResponse, error) {
 	log.Println("requesting: " + ip + " request: " + request + "\n")
 	connection, err := net.Dial("tcp", ip)
 	if err != nil {
@@ -20,7 +61,11 @@ func makeRequest(ip string, request string) string {
 	}
 	connection.Write([]byte(request + "\n"));
 	response, err := io.ReadAll(connection);
-	return string(response)
+	parsedResponse, err := parsePengoResponse(string(response));
+	if err != nil {
+		return PengoResponse{}, err;
+	}
+	return parsedResponse, nil;
 }
 
 func parseInput(input string) (ip string, request string, err error){
@@ -94,6 +139,10 @@ func main() {
 		log.Println(err)
 		return;
 	}
-	response := makeRequest(resolvedIp, request)
-	fmt.Print(response)
+	response, err := makeRequest(resolvedIp, request)
+	if err != nil {
+		fmt.Print(err)
+		return;
+	}
+	fmt.Print(response.Version + "\n" + response.Status + "\n" + response.Body + "\n")
 }
