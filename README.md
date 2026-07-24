@@ -20,10 +20,10 @@ Web for penguins, written from scratch:
 
 | Folder           | What                                                          |
 | ---------------- | ------------------------------------------------------------ |
-| `pengo/`         | the protocol library — builds/reads messages + `Fetch` (does the whole flow) |
-| `resolver/`      | DNS client — turns a name into an ip, speaks the `:7007` format |
+| `pengo/`         | the protocol library itself |
+| `resolver/`      | DNS client — turns a name into an ip, expects a `:7007` dns server |
 | `cmd/server/`    | serves pages on `:2719`                                       |
-| `cmd/dns/`       | resolves names via `registry.json` on `:7007`                |
+| `cmd/dns/`       | DNS server that resolves names via `registry.json` on `:7007`                |
 | `cmd/client/`    | CLI client                                                   |
 | `pengo-browser/` | the browser (Wails: Go backend + JS frontend)                |
 
