@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"pengo-proto/protocol"
+	"pengo-proto/pengo"
 )
 
 // App struct
@@ -27,8 +27,8 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-func (a *App) Fetch(input string) (protocol.PengoResponse, error) {
-	return protocol.Fetch(input)
+func (a *App) Fetch(input string) (pengo.Response, error) {
+	return pengo.Fetch(input)
 }
 
 

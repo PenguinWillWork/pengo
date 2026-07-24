@@ -1,13 +1,13 @@
-export namespace protocol {
+export namespace pengo {
 	
-	export class PengoResponse {
+	export class Response {
 	    Version: string;
 	    Status: string;
 	    ContentLength: number;
 	    Body: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new PengoResponse(source);
+	        return new Response(source);
 	    }
 	
 	    constructor(source: any = {}) {
