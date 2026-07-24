@@ -15,7 +15,8 @@ type Response struct {
 
 const (
 	StatusOK = "200 OKY"
-	StatusNotFound = "400 CONTENT NOT FOUND"
+	StatusBadRequest = "400 SERVER CANNOT UNDERSTAND YOUR REQUEST BODY"
+	StatusNotFound = "404 CONTENT NOT FOUND"
 	StatusInternalServerError = "500 SERVER DID SOMETHING WRONG"
 )
 
