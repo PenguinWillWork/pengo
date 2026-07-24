@@ -18,13 +18,14 @@ Web for penguins, written from scratch:
 | DNS            | Pengo DNS server (`:7007`) |
 | Chrome         | pengo-browser              |
 
-| Folder           | What                                             |
-| ---------------- | ------------------------------------------------ |
-| `protocol/`      | shared library — builds and reads Pengo messages |
-| `cmd/server/`    | serves pages on `:2719`                          |
-| `cmd/dns/`       | resolves names via `registry.json` on `:7007`    |
-| `cmd/client/`    | CLI client                                       |
-| `pengo-browser/` | the browser (Wails: Go backend + JS frontend)    |
+| Folder           | What                                                          |
+| ---------------- | ------------------------------------------------------------ |
+| `pengo/`         | the protocol library — builds/reads messages + `Fetch` (does the whole flow) |
+| `resolver/`      | DNS client — turns a name into an ip, speaks the `:7007` format |
+| `cmd/server/`    | serves pages on `:2719`                                       |
+| `cmd/dns/`       | resolves names via `registry.json` on `:7007`                |
+| `cmd/client/`    | CLI client                                                   |
+| `pengo-browser/` | the browser (Wails: Go backend + JS frontend)                |
 
 Everything under `cmd/` is runnable. The rest is a library.
 
