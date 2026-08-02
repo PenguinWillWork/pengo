@@ -20,6 +20,10 @@ func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) 
 
 	var response string
 	input = strings.TrimSpace(input)
+
+	if input == "/" {
+		input = "/index";
+	}
     content, err := root.ReadFile("./" + input + ".html")
 
 	if len(content) == 0 {

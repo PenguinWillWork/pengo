@@ -51,7 +51,7 @@ func parseInput(input string) (ip string, request string, err error){
 
 	uriBody := strings.SplitN(inputWithoutProto, "/", 2);
 	host := uriBody[0];
-	path := "/home";
+	path := "/";
 	if len(uriBody) > 1 && uriBody[1] != "" {
 		path = "/" + uriBody[1];
 	}
