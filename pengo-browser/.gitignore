@@ -8,6 +8,7 @@ frontend/dist/*
 
 # Wails build artifacts
 build/bin/
+build/windows/installer/wails_tools.nsh
 
 # Compiled app binary
 /pengo-browser
