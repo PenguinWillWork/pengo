@@ -1,6 +1,7 @@
 import "./style.css";
 import { PengoFetch } from "../wailsjs/go/main/App";
 import connectionErrorPage from "./pages/connection-error.html?raw";
+import wrongProtocol from "./pages/wrong-protocol.html?raw";
 
 // document.querySelector('#app').innerHTML = `<div class="hello">Hello World</div>`;
 let currentLocation;
@@ -13,13 +14,15 @@ document.querySelector(".search-bar-go").addEventListener("click", async () => {
 async function appBodyFetch() {
   const uri = currentLocation;
   try {
+    if (uri.includes("http")) {
+      appBody.innerHTML = wrongProtocol;
+      return;
+    }
     const response = await PengoFetch(uri);
     appBody.innerHTML = response.Body;
-    console.log("bbb");
   } catch (error) {
     console.log(error);
     appBody.innerHTML = connectionErrorPage;
-    console.log("aaa");
   }
   document.querySelector(".search-bar-input").value = uri;
 }
