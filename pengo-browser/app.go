@@ -27,7 +27,7 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-func (a *App) Fetch(input string) (pengo.Response, error) {
+func (a *App) PengoFetch(input string) (pengo.Response, error) {
 	return pengo.Fetch(input)
 }
 

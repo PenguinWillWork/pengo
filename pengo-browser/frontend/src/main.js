@@ -1,10 +1,37 @@
 import "./style.css";
-import { Fetch } from "../wailsjs/go/main/App";
+import { PengoFetch } from "../wailsjs/go/main/App";
+import connectionErrorPage from "./pages/connection-error.html?raw";
 
 // document.querySelector('#app').innerHTML = `<div class="hello">Hello World</div>`;
+let currentLocation;
 const appBody = document.querySelector(".content");
 document.querySelector(".search-bar-go").addEventListener("click", async () => {
-  const uri = document.querySelector(".search-bar-input").value;
-  const response = await Fetch(uri);
-  appBody.innerHTML = response.Body;
+  currentLocation = document.querySelector(".search-bar-input").value;
+  await appBodyFetch();
+});
+
+async function appBodyFetch() {
+  const uri = currentLocation;
+  try {
+    const response = await PengoFetch(uri);
+    appBody.innerHTML = response.Body;
+    console.log("bbb");
+  } catch (error) {
+    console.log(error);
+    appBody.innerHTML = connectionErrorPage;
+    console.log("aaa");
+  }
+  document.querySelector(".search-bar-input").value = uri;
+}
+
+appBody.addEventListener("click", async () => {
+  const e = event.target.closest("a");
+  event.preventDefault();
+
+  if (e) {
+    const pengoedHref = e.getAttribute("href");
+    const finalHref = new URL(pengoedHref, currentLocation);
+    currentLocation = finalHref.href;
+    await appBodyFetch();
+  }
 });
