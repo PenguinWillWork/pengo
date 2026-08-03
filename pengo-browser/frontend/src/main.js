@@ -19,7 +19,21 @@ async function appBodyFetch() {
       return;
     }
     const response = await PengoFetch(uri);
-    appBody.innerHTML = response.Body;
+
+    if (response.ContentType == ".html" || response.ContentType == "text") {
+      const binary = atob(response.Body);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      appBody.innerHTML = new TextDecoder().decode(bytes);
+    }
+    if (response.ContentType == ".png") {
+      console.log(response.ContentType);
+      //temp solution to test images
+      const dataUrl = `data:image/png;base64,${response.Body}`;
+      appBody.innerHTML = `<img src="${dataUrl}">`;
+    }
   } catch (error) {
     console.log(error);
     appBody.innerHTML = connectionErrorPage;

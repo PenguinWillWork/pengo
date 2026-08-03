@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 	"pengo-proto/pengo"
 	"strings"
 )
@@ -17,21 +18,21 @@ func fileExists(path string, root *os.Root) bool {
 }
 
 
-func resolveExtension(input string, root *os.Root) (string, error) {
+func resolveExtension(input string, root *os.Root) (string, contentType string, err error) {
 	if fileExists(input, root) {
 		log.Println("file found as is returning: " + input)
-		return input, nil
+		return input, filepath.Ext(input), nil
 	}
 	if fileExists(input + ".html", root) {
 		log.Println("file comes with no ext -> returning html: " + input + ".html")
-		return input + ".html", nil
+		return input + ".html", ".html", nil
 	} 
 	log.Println("no file:  " + input)
-	return "", errors.New("Input path's file doesn't exist\n");
+	return "", "text", errors.New("Input path's file doesn't exist\n");
 }
 
 func serverErrorResponse(connection net.Conn, err error) {
-	response := pengo.MakeResponse(pengo.StatusInternalServerError, "Internal Server Error")
+	response := pengo.MakeResponse(pengo.StatusInternalServerError, "text", []byte("Internal Server Error"))
 	connection.Write([]byte(response))
 	return;
 }
@@ -50,7 +51,8 @@ func notFoundResponse(connection net.Conn, notFoundPath *string, root *os.Root) 
 
 	response := pengo.MakeResponse(
 		pengo.StatusNotFound,
-		string(notFoundContent),
+		".html",
+		notFoundContent,
 	)
 	log.Println(response)
 	connection.Write([]byte(response))
@@ -65,13 +67,13 @@ func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) 
 		return
 	}
 
-	var response string
+	var response []byte
 	input = strings.TrimSpace(input)
 
 	if input == "/" {
 		input = "/index";
 	}
-	extensionResolvedInput, err := resolveExtension(input, root);
+	extensionResolvedInput, contentType, err := resolveExtension(input, root);
 	if err != nil {
 		serverErrorResponse(connection, err);
 	}
@@ -85,8 +87,8 @@ func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) 
 		serverErrorResponse(connection, err);
 		return;
 	}
-
-	response = pengo.MakeResponse(pengo.StatusOK, string(content))
+	response = pengo.MakeResponse(pengo.StatusOK, contentType, content)
+	log.Println(contentType)
 	connection.Write([]byte(response))
 }
 
