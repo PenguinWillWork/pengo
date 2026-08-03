@@ -18,14 +18,15 @@ Web for penguins, written from scratch:
 | DNS            | Pengo DNS server (`:7007`) |
 | Chrome         | pengo-browser              |
 
-| Folder           | What                                                          |
-| ---------------- | ------------------------------------------------------------ |
-| `pengo/`         | the protocol library itself |
-| `resolver/`      | DNS client — turns a name into an ip, expects a `:7007` dns server |
-| `cmd/server/`    | serves pages on `:2719`                                       |
-| `cmd/dns/`       | DNS server that resolves names via `registry.json` on `:7007`                |
-| `cmd/client/`    | CLI client                                                   |
-| `pengo-browser/` | the browser (Wails: Go backend + JS frontend)                |
+| Folder           | What                                                                   |
+| ---------------- | ---------------------------------------------------------------------- |
+| `pengo/`         | the protocol library itself                                            |
+| `resolver/`      | DNS client — turns a name into an ip, expects a `:7007` dns server     |
+| `cmd/server/`    | serves the folder it's started in, on `:2719`                          |
+| `cmd/dns/`       | DNS server that resolves names via `registry.json` on `:7007`          |
+| `cmd/client/`    | CLI client                                                             |
+| `pengo-browser/` | the browser (Wails: Go backend + JS frontend)                          |
+| `sites/`         | example sites — plain folders of files, nothing pengo-specific in them |
 
 Everything under `cmd/` is runnable. The rest is a library.
 
@@ -39,7 +40,7 @@ Typing `pengo://welcome`:
 
 ```
 frontend  → hands the address to the Go backend
-backend   → splits into host (welcome) + path (e.g. /home, if any)
+backend   → splits into host (welcome) + path (/ if none given)
           → asks DNS :7007 where welcome is  → 127.0.0.1:2719
           ← response comes back
 frontend  ← renders it
@@ -51,13 +52,33 @@ Response format - headers, blank line, body:
 
 ```
 PENGO/0.1
-200 OK
+200 OKY
 Content-Length:412
+Content-Type:.html
 
 <div>...the page...</div>
 ```
 
 Nothing new but when you realize it's the only internet for penguins you start to think it's really cool
+
+## Serving files
+
+A site is just a folder. The server starts inside it and reads whatever gets asked for.
+
+Paths are resolved by trying things in order:
+
+```
+/cat.png  → cat.png exists  → serve it
+/about    → no about        → about.html exists → serve that
+/         → /index          → index.html
+nothing?  → 404.html, or a built-in one if the site has none
+```
+
+So pages don't need `.html` in the address, and files keep theirs. The client sends the path exactly as typed, the server does the guessing.
+
+Bodies are bytes now instead of text, so images work. `Content-Type` currently holds the file extension (`.html`, `.png`) instead of a proper type like `image/png`. That'll be changed.
+
+The browser reads it and picks: html gets rendered, images get turned into a `data:` url. There's base64 in the middle because Wails talks to the frontend in JSON, and JSON can't hold raw bytes.
 
 ## vs HTTP
 
@@ -70,9 +91,11 @@ Three terminals:
 
 ```bash
 cp cmd/dns/registry.example.json cmd/dns/registry.json
-go run ./cmd/dns              # DNS
-go run ./cmd/server           # a site
-cd pengo-browser && wails dev # browser
+go run ./cmd/dns                          # DNS
+cd sites/welcome && go run ../../cmd/server   # a site — cwd is what gets served
+cd pengo-browser && wails dev             # browser
 ```
 
-Then type `pengo://127.0.0.1/home`. For names instead of IPs, add them to `registry.json`.
+The server serves whatever folder you start it in, so `cd` into your own folder of files and it works — no config, nothing to register.
+
+Then type `pengo://127.0.0.1`. For names instead of IPs, add them to `registry.json`.
