@@ -7,7 +7,8 @@ import wrongProtocol from "./pages/wrong-protocol.html?raw";
 let currentLocation;
 const appBody = document.querySelector(".content");
 document.querySelector(".search-bar-go").addEventListener("click", async () => {
-  currentLocation = document.querySelector(".search-bar-input").value;
+  currentLocation =
+    document.querySelector<HTMLInputElement>(".search-bar-input").value;
   await appBodyFetch();
 });
 
@@ -22,7 +23,7 @@ async function appBodyFetch() {
     if (loadingSpinner) loadingSpinner.removeAttribute("hidden");
     const response = await PengoFetch(uri);
     if (response.ContentType == ".html" || response.ContentType == "text") {
-      const binary = atob(response.Body);
+      const binary = atob(response.Body as unknown as string);
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) {
         bytes[i] = binary.charCodeAt(i);
@@ -41,11 +42,11 @@ async function appBodyFetch() {
   } finally {
     loadingSpinner.setAttribute("hidden", "");
   }
-  document.querySelector(".search-bar-input").value = uri;
+  document.querySelector<HTMLInputElement>(".search-bar-input").value = uri;
 }
 
 appBody.addEventListener("click", async () => {
-  const e = event.target.closest("a");
+  const e = (event.target as Element).closest("a");
   event.preventDefault();
 
   if (e) {
