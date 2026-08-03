@@ -22,6 +22,9 @@
 /bin/
 /dist/
 
+# Wails' local marker for "package.json unchanged, skip npm install"
+package.json.md5
+
 # Go workspace file
 go.work
 go.work.sum
