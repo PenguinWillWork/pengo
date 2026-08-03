@@ -8,12 +8,10 @@ import (
 	"os"
 	"path/filepath"
 	"pengo-proto/pengo"
-	"strings"
 )
 
 func fileExists(path string, root *os.Root) bool {
 	_, err := root.Stat("./" + path)
-	log.Println(err)
 	return err == nil
 }
 
@@ -62,18 +60,16 @@ func notFoundResponse(connection net.Conn, notFoundPath *string, root *os.Root) 
 func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) {
 	defer connection.Close()
 	reader := bufio.NewReader(connection)
-	input, err := reader.ReadString('\n')
+	request, err := pengo.ParseRequest(reader) 
 	if err != nil {
 		return
 	}
 
 	var response []byte
-	input = strings.TrimSpace(input)
-
-	if input == "/" {
-		input = "/index";
+	if request.RequestPath == "/" {
+		request.RequestPath = "/index";
 	}
-	extensionResolvedInput, contentType, err := resolveExtension(input, root);
+	extensionResolvedInput, contentType, err := resolveExtension(request.RequestPath, root);
 	if err != nil {
 		serverErrorResponse(connection, err);
 	}
