@@ -12,14 +12,15 @@ document.querySelector(".search-bar-go").addEventListener("click", async () => {
 });
 
 async function appBodyFetch() {
+  const loadingSpinner = document.querySelector(".search-bar-spinner");
   const uri = currentLocation;
   try {
     if (uri.includes("http")) {
       appBody.innerHTML = wrongProtocol;
       return;
     }
+    if (loadingSpinner) loadingSpinner.removeAttribute("hidden");
     const response = await PengoFetch(uri);
-
     if (response.ContentType == ".html" || response.ContentType == "text") {
       const binary = atob(response.Body);
       const bytes = new Uint8Array(binary.length);
@@ -37,6 +38,8 @@ async function appBodyFetch() {
   } catch (error) {
     console.log(error);
     appBody.innerHTML = connectionErrorPage;
+  } finally {
+    loadingSpinner.setAttribute("hidden", "");
   }
   document.querySelector(".search-bar-input").value = uri;
 }

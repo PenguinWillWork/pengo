@@ -93,6 +93,22 @@ body {
   box-shadow: 0 0 0 3px rgba(27, 38, 54, 0.12);
 }
 
+.search-bar-spinner {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--bar-border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: search-bar-spin 0.7s linear infinite;
+}
+
+@keyframes search-bar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .search-bar-go {
   flex: 0 0 auto;
   height: 38px;
