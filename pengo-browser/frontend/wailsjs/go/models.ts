@@ -4,7 +4,8 @@ export namespace pengo {
 	    Version: string;
 	    Status: string;
 	    ContentLength: number;
-	    Body: string;
+	    ContentType: string;
+	    Body: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Response(source);
@@ -15,6 +16,7 @@ export namespace pengo {
 	        this.Version = source["Version"];
 	        this.Status = source["Status"];
 	        this.ContentLength = source["ContentLength"];
+	        this.ContentType = source["ContentType"];
 	        this.Body = source["Body"];
 	    }
 	}

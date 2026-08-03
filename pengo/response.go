@@ -10,7 +10,8 @@ type Response struct {
 	Version string
 	Status string
 	ContentLength int
-	Body  string
+	ContentType string
+	Body  []byte
 }
 
 const (
@@ -21,12 +22,12 @@ const (
 )
 
 // standartizing response.. statuses need some structuring and the whole function requires some sanitizing before blindly appending things to the response i guess
-func MakeResponse(status string, body string) string {
+func MakeResponse(status string, contentType string, body []byte) []byte {
 	proto := "PENGO/0.1"
 	contentLength := len(body)
-	return proto + "\n" + status + "\n" +
-		"Content-Length:" + strconv.Itoa(contentLength) + "\n\n" +
-		body
+	header := proto + "\n" + status + "\n" +
+      "Content-Length:" + strconv.Itoa(contentLength) + "\n" + "Content-Type:" + contentType + "\n\n"
+	return append([]byte(header), body...)
 }
 
 func ParseResponse(response string) (parsedResponse Response, err error) {
@@ -62,11 +63,14 @@ func ParseResponse(response string) (parsedResponse Response, err error) {
 				return Response{}, errors.New("malformed Content-Length: " + value)
 			}
 			parsedResponse.ContentLength = length
+		case "Content-Type":
+			parsedResponse.ContentType = value
+		
 		}
 	}
 	if len(body) < parsedResponse.ContentLength {
 		return Response{}, errors.New("truncated body: fewer bytes thanContent-Length promised")
 	}
-	parsedResponse.Body = body
+	parsedResponse.Body = []byte(body)
 	return parsedResponse, nil;
 }
