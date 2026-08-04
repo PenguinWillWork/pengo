@@ -46,7 +46,7 @@ backend   → splits into host (welcome) + path (/ if none given)
 frontend  ← renders it
 ```
 
-![pengo-browser](assets/pengo-browser.png)
+![pengo-browser](assets/pengo-browser-dem.gif)
 
 Response format - headers, blank line, body:
 
