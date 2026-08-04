@@ -22,7 +22,7 @@ async function appBodyFetch() {
     }
     if (loadingSpinner) loadingSpinner.removeAttribute("hidden");
     const response = await PengoFetch(uri);
-    if (response.ContentType == ".html" || response.ContentType == "text") {
+    if (response.ContentType.includes("text")) {
       const binary = atob(response.Body as unknown as string);
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) {
@@ -30,7 +30,7 @@ async function appBodyFetch() {
       }
       appBody.innerHTML = new TextDecoder().decode(bytes);
     }
-    if (response.ContentType == ".png") {
+    if (response.ContentType.includes("image")) {
       console.log(response.ContentType);
       //temp solution to test images
       const dataUrl = `data:image/png;base64,${response.Body}`;
