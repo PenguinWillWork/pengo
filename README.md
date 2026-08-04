@@ -54,7 +54,7 @@ Response format - headers, blank line, body:
 PENGO/0.1
 200 OKY
 Content-Length:412
-Content-Type:.html
+Content-Type:text/html
 
 <div>...the page...</div>
 ```
@@ -76,7 +76,7 @@ nothing?  → 404.html, or a built-in one if the site has none
 
 So pages don't need `.html` in the address, and files keep theirs. The client sends the path exactly as typed, the server does the guessing.
 
-Bodies are bytes now instead of text, so images work. `Content-Type` currently holds the file extension (`.html`, `.png`) instead of a proper type like `image/png`. That'll be changed.
+Bodies are bytes now instead of text, so images work.
 
 The browser reads it and picks: html gets rendered, images get turned into a `data:` url. There's base64 in the middle because Wails talks to the frontend in JSON, and JSON can't hold raw bytes.
 
