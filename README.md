@@ -85,6 +85,23 @@ The browser reads it and picks: html gets rendered, images get turned into a `da
 The whole "browser -> pengo protocol -> server" flow currently doesn't differ from http much. But.. Pengo doesn't really have TLDs:
 `registry.json` currently is one flat file, name -> ip.
 
+## What pengo doesn't replace (spoiler: JS is staying)
+
+The web stack is the one piece Pengo deliberately doesn't replace.
+
+For two reasons:
+
+- **HTML/CSS/JS is a web standart** and every platform already ships an engine that renders them. Pengo is a separate **net**, not a different way to write a page. Anyone who can build a website can build a pengo site. Pengo is not trying to be different for the sake of being different.
+
+But most importantly:
+
+- **A rendering engine isn't part of a "net".** Layout, text shaping, fonts, the CSS, a JS engine. The hardest part of a browser and the part with nothing to
+  do with the net. Writing it would eat the project and pengo would never get past the address bar.
+
+It DOES requires tricks though, since web-engines were built around HTTP yet is still the fastest way to develop, deploy and display content today
+
+P.S browser was migrated to TypeScript
+
 ## Running
 
 Three terminals:
