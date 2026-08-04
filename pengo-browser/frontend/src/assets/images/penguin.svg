@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pengo">
+  <rect width="64" height="64" fill="#e2e5ea" />
+  <g fill="#5b6472">
+    <path d="M-2 64c0-13 15-21 34-21s34 8 34 21z" />
+    <ellipse cx="30" cy="25" rx="12.5" ry="13.5" />
+    <path d="M40 20l10 6-10 6z" />
+  </g>
+  <circle cx="35" cy="22" r="2.4" fill="#ffffff" />
+</svg>

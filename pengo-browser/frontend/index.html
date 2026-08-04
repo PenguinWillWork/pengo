@@ -8,6 +8,9 @@
   <body>
     <div id="app">
       <header class="search-bar">
+        <div class="search-bar-icon">
+          <img class="search-bar-icon-image" alt="" hidden />
+        </div>
         <input
           class="search-bar-input"
           type="text"
@@ -15,12 +18,24 @@
           spellcheck="false"
           autocomplete="off"
         />
+        <div class="search-bar-spinner" hidden></div>
         <button class="search-bar-go">GO</button>
+        <button
+          class="search-bar-menu"
+          type="button"
+          aria-label="Browser settings"
+        >
+          <img
+            class="search-bar-menu-image"
+            src="./src/assets/images/penguin.svg"
+            alt=""
+          />
+        </button>
       </header>
       <main class="content">
         <div class="content-empty">Enter a pengo:// address to begin</div>
       </main>
     </div>
-    <script src="./src/main.js" type="module"></script>
+    <script src="./src/main.ts" type="module"></script>
   </body>
 </html>

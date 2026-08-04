@@ -4,30 +4,26 @@ import (
 	"bufio"
 	"errors"
 	"log"
+	"mime"
 	"net"
 	"os"
 	"path/filepath"
 	"pengo-proto/pengo"
-	"strings"
 )
 
 func fileExists(path string, root *os.Root) bool {
 	_, err := root.Stat("./" + path)
-	log.Println(err)
 	return err == nil
 }
 
 
 func resolveExtension(input string, root *os.Root) (string, contentType string, err error) {
 	if fileExists(input, root) {
-		log.Println("file found as is returning: " + input)
-		return input, filepath.Ext(input), nil
+		return input, mime.TypeByExtension(filepath.Ext(input)), nil
 	}
 	if fileExists(input + ".html", root) {
-		log.Println("file comes with no ext -> returning html: " + input + ".html")
-		return input + ".html", ".html", nil
+		return input + ".html", mime.TypeByExtension(".html"), nil
 	} 
-	log.Println("no file:  " + input)
 	return "", "text", errors.New("Input path's file doesn't exist\n");
 }
 
@@ -62,18 +58,16 @@ func notFoundResponse(connection net.Conn, notFoundPath *string, root *os.Root) 
 func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) {
 	defer connection.Close()
 	reader := bufio.NewReader(connection)
-	input, err := reader.ReadString('\n')
+	request, err := pengo.ParseRequest(reader) 
 	if err != nil {
 		return
 	}
 
 	var response []byte
-	input = strings.TrimSpace(input)
-
-	if input == "/" {
-		input = "/index";
+	if request.RequestPath == "/" {
+		request.RequestPath = "/index";
 	}
-	extensionResolvedInput, contentType, err := resolveExtension(input, root);
+	extensionResolvedInput, contentType, err := resolveExtension(request.RequestPath, root);
 	if err != nil {
 		serverErrorResponse(connection, err);
 	}
@@ -88,7 +82,7 @@ func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) 
 		return;
 	}
 	response = pengo.MakeResponse(pengo.StatusOK, contentType, content)
-	log.Println(contentType)
+	// log.Println(contentType)
 	connection.Write([]byte(response))
 }
 

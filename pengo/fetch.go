@@ -10,28 +10,31 @@ import (
 )
 
 func Fetch(input string) (Response, error) {
-	host, request, err := parseInput(input);
+	host, reqPath, err := parseUserInput(input);
 	if err != nil {
 		return Response{}, err;
 	}
-	resolvedIp, err := resolver.Resolve(host);
-	if err != nil {
-		return Response{}, err;
-	}
-	response, err := makeRequest(resolvedIp, request)
+	response, err := makeRequest(host, reqPath)
 	if err != nil {
 		return Response{}, err;
 	}
 	return response, nil;
 }
 
-func makeRequest(ip string, request string) (Response, error) {
-	log.Println("requesting: " + ip + " request: " + request + "\n")
-	connection, err := net.Dial("tcp", ip)
+
+
+func makeRequest(host string, request string) (Response, error) {
+	resolvedIp, err := resolver.Resolve(host);
 	if err != nil {
-		return Response{}, errors.New("Couldn't connect to the pengo server on " + ip + "\n");
+		return Response{}, err;
 	}
-	connection.Write([]byte(request + "\n"));
+	log.Println("requesting: " + resolvedIp + " request: " + request + "\n")
+	connection, err := net.Dial("tcp", resolvedIp)
+	if err != nil {
+		return Response{}, errors.New("Couldn't connect to the pengo server on " + resolvedIp + "\n");
+	}
+	formedRequest := FormRequest(host, request)
+	connection.Write(formedRequest);
 	response, err := io.ReadAll(connection);
 	parsedResponse, err := ParseResponse(string(response));
 	if err != nil {
@@ -40,7 +43,7 @@ func makeRequest(ip string, request string) (Response, error) {
 	return parsedResponse, nil;
 }
 
-func parseInput(input string) (ip string, request string, err error){
+func parseUserInput(input string) (host string, request string, err error){
 	normalizedInput := strings.TrimSpace(strings.ToLower(input));
 	proto := strings.Split(normalizedInput, "://")[0];
 	inputWithoutProto := strings.Replace(normalizedInput, proto + "://", "", -1);
@@ -50,10 +53,10 @@ func parseInput(input string) (ip string, request string, err error){
 	}
 
 	uriBody := strings.SplitN(inputWithoutProto, "/", 2);
-	host := uriBody[0];
+	hostFromUri := uriBody[0];
 	path := "/";
 	if len(uriBody) > 1 && uriBody[1] != "" {
 		path = "/" + uriBody[1];
 	}
-	return host, path, nil;
+	return hostFromUri, path, nil;
 }
