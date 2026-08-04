@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <rect width="500" height="500" rx="112" fill="#f1f3f6"/>
+
+  <!-- feet peek out under the body -->
+  <rect x="206" y="396" width="40" height="32" rx="16" fill="#e0a25e"/>
+  <rect x="254" y="396" width="40" height="32" rx="16" fill="#e0a25e"/>
+
+  <ellipse cx="250" cy="292" rx="112" ry="118" fill="#1b2636"/>
+  <circle cx="250" cy="178" r="82" fill="#1b2636"/>
+  <ellipse cx="250" cy="322" rx="62" ry="68" fill="#ffffff"/>
+
+  <!-- flippers as an inset detail, kept inside the silhouette -->
+  <ellipse cx="164" cy="300" rx="20" ry="52" fill="#2b3b54" transform="rotate(-10 164 300)"/>
+  <ellipse cx="336" cy="300" rx="20" ry="52" fill="#2b3b54" transform="rotate(10 336 300)"/>
+
+  <circle cx="220" cy="166" r="15" fill="#ffffff"/>
+  <circle cx="280" cy="166" r="15" fill="#ffffff"/>
+  <circle cx="223" cy="169" r="7" fill="#1b2636"/>
+  <circle cx="283" cy="169" r="7" fill="#1b2636"/>
+
+  <path d="M231 198 L269 198 Q274 198 271 203 L254 226 Q250 231 246 226 L229 203 Q226 198 231 198 Z" fill="#e0a25e"/>
+
+  <rect x="1" y="1" width="498" height="498" rx="111" fill="none" stroke="#e2e5ea" stroke-width="2"/>
+</svg>

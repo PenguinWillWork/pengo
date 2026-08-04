@@ -98,8 +98,6 @@ But most importantly:
 - **A rendering engine isn't part of a "net".** Layout, text shaping, fonts, the CSS, a JS engine. The hardest part of a browser and the part with nothing to
   do with the net. Writing it would eat the project and pengo would never get past the address bar.
 
-It DOES requires tricks though, since web-engines were built around HTTP yet is still the fastest way to develop, deploy and display content today
-
 P.S browser was migrated to TypeScript
 
 ## Running
