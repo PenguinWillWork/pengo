@@ -9,6 +9,11 @@
   --content-bg: #f7f8fa;
 }
 
+.test > img {
+  max-width: 30%;
+  overflow: hidden;
+}
+
 *,
 *::before,
 *::after {
@@ -64,6 +69,60 @@ body {
   background-color: var(--bar-bg);
   border-bottom: 1px solid var(--bar-border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* holder for the current site's icon — a gray dot until an icon arrives */
+.search-bar-icon {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 5px;
+  background-color: var(--bar-border);
+  overflow: hidden;
+  transition:
+    width 0.2s,
+    height 0.2s,
+    padding 0.2s,
+    border-radius 0.2s,
+    background-color 0.2s;
+}
+
+.search-bar-icon--loaded {
+  width: 40px;
+  height: 40px;
+  padding: 7px;
+  border-radius: 10px;
+  background-color: var(--input-bg);
+}
+
+.search-bar-icon-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.search-bar-icon-image[hidden] {
+  display: none;
+}
+
+/* first letter of the host, stands in until a real icon loads */
+.search-bar-icon-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--accent);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.search-bar-icon-letter[hidden] {
+  display: none;
 }
 
 .search-bar-input {
@@ -133,6 +192,31 @@ body {
 
 .search-bar-go:active {
   transform: translateY(1px);
+}
+
+/* settings / info entry point */
+.search-bar-menu {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.search-bar-menu:hover {
+  box-shadow: 0 0 0 3px rgba(27, 38, 54, 0.12);
+}
+
+.search-bar-menu-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* content region — where the fetched page lives */
