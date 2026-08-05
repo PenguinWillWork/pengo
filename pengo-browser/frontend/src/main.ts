@@ -57,7 +57,7 @@ async function fetchPage() {
       return;
     }
     if (loadingSpinner) loadingSpinner.removeAttribute("hidden");
-    resolveRequest(currentUrl);
+    await resolveRequest(currentUrl);
   } catch (error) {
     console.log(error);
     appBodyFrame.srcdoc = connectionErrorPage;
