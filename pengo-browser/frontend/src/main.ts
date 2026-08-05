@@ -3,6 +3,7 @@ import { PengoFetch } from "../wailsjs/go/main/App";
 import { pengo } from "../wailsjs/go/models";
 import connectionErrorPage from "./pages/connection-error.html?raw";
 import wrongProtocol from "./pages/wrong-protocol.html?raw";
+import { resolveIcon } from "./services/icon.resolver";
 
 // document.querySelector('#app').innerHTML = `<div class="hello">Hello World</div>`;
 let currentLocation: string;
@@ -16,7 +17,7 @@ document.querySelector(".search-bar-go").addEventListener("click", async () => {
 async function appBodyFetch() {
   const loadingSpinner = document.querySelector(".search-bar-spinner");
   const uri = currentLocation;
-  resolveIcon();
+  resolveIcon(currentLocation);
   try {
     if (uri.includes("http")) {
       appBody.innerHTML = wrongProtocol;
@@ -63,78 +64,6 @@ async function resolvePengoUrlImgs() {
       console.error(error);
     }
   }
-}
-
-async function resolveIcon() {
-  const iconContainer =
-    document.querySelector<HTMLDivElement>(".search-bar-icon");
-  iconContainer.classList.remove("search-bar-icon--loaded");
-
-  const iconImg = document.querySelector<HTMLImageElement>(
-    ".search-bar-icon-image",
-  );
-  if (!iconImg || !iconContainer) {
-    return;
-  }
-  if (iconImg) {
-    iconImg.hidden = true;
-  }
-
-  const iconLetter = iconContainer.querySelector<HTMLSpanElement>(
-    ".search-bar-icon-letter",
-  );
-  if (iconLetter) {
-    iconLetter.hidden = true;
-  }
-
-  try {
-    const iconUrl = new URL("/favicon.ico", currentLocation).href;
-    const iconResponse = await PengoFetch(iconUrl);
-    applySiteIcon(iconResponse, iconImg, iconContainer);
-  } catch (error) {
-    console.log(error);
-    generatePlaceholderIcon();
-  }
-}
-
-function applySiteIcon(
-  iconResponse: pengo.Response,
-  iconImg: HTMLImageElement,
-  iconContainer: HTMLDivElement,
-) {
-  iconImg.src = `data:${iconResponse.ContentType};base64,${iconResponse.Body}`;
-  iconImg.hidden = false;
-  iconContainer.classList.add("search-bar-icon--loaded");
-}
-
-function generatePlaceholderIcon() {
-  const firstLetter = currentLocation.replace("pengo://", "").trim().charAt(0);
-  if (!firstLetter) return;
-
-  const iconContainer =
-    document.querySelector<HTMLDivElement>(".search-bar-icon");
-
-  const iconImg = document.querySelector<HTMLImageElement>(
-    ".search-bar-icon-image",
-  );
-  if (!iconImg || !iconContainer) {
-    return;
-  }
-
-  iconImg.hidden = true;
-
-  let iconLetter = iconContainer.querySelector<HTMLSpanElement>(
-    ".search-bar-icon-letter",
-  );
-  if (!iconLetter) {
-    iconLetter = document.createElement("span");
-    iconLetter.className = "search-bar-icon-letter";
-    iconContainer.append(iconLetter);
-  }
-
-  iconLetter.hidden = false;
-  iconLetter.textContent = firstLetter.toUpperCase();
-  iconContainer.classList.add("search-bar-icon--loaded");
 }
 
 appBody.addEventListener("click", async () => {
