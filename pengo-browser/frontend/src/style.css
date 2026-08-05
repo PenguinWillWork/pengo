@@ -221,10 +221,19 @@ body {
 
 /* content region — where the fetched page lives */
 .content {
+  width: 100vw;
+  height: 100vh;
   flex: 1 1 auto;
   overflow: auto;
   background-color: var(--content-bg);
+  /* padding: 1.5rem; */
+}
+
+.content > iframe {
   padding: 1.5rem;
+
+  width: 100vw;
+  height: 100vh;
 }
 
 .content-empty {
