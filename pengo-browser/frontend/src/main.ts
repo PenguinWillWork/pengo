@@ -5,7 +5,6 @@ import connectionErrorPage from "./pages/connection-error.html?raw";
 import wrongProtocol from "./pages/wrong-protocol.html?raw";
 import { resolveIcon } from "./services/icon.resolver";
 
-// document.querySelector('#app').innerHTML = `<div class="hello">Hello World</div>`;
 let currentUrl: string;
 const appBodyFrame = document.querySelector("iframe");
 document.querySelector(".search-bar-go").addEventListener("click", async () => {
@@ -14,14 +13,17 @@ document.querySelector(".search-bar-go").addEventListener("click", async () => {
   await fetchPage();
 });
 
-function renderAsText(response: pengo.Response) {
+function decodeHtml(response: pengo.Response): Uint8Array<ArrayBuffer> {
   const binary = atob(response.Body as unknown as string);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
-  appBodyFrame.srcdoc = new TextDecoder().decode(bytes);
-  resolvePengoUrlImgs();
+  return bytes;
+}
+
+function renderAsText(html: string) {
+  appBodyFrame.srcdoc = html;
 }
 
 function renderAsImage(response: pengo.Response) {
@@ -31,8 +33,15 @@ function renderAsImage(response: pengo.Response) {
 
 async function resolveRequest(uri: string) {
   const response = await PengoFetch(uri);
+
+  let parsedHtml = Document.parseHTMLUnsafe(
+    atob(response.Body as unknown as string),
+  );
+
+  parsedHtml = await resolvePengoUrlImgs(parsedHtml);
+  // console.log(parsedHtml);
   if (response.ContentType.includes("text")) {
-    renderAsText(response);
+    renderAsText(parsedHtml.documentElement.outerHTML);
   }
   if (response.ContentType.includes("image")) {
     renderAsImage(response);
@@ -61,7 +70,7 @@ async function fetchPage() {
 
 //Temp pengo:// img fetcher that converts response to a base64 src.
 //Will be replaced later since having all images on the page in base64 is not the most efficient thing
-async function resolvePengoUrlImgs() {
+async function resolvePengoUrlImgs(document: Document): Promise<Document> {
   const imagesArr = document.querySelectorAll<HTMLImageElement>("img");
 
   for (const img of imagesArr) {
@@ -75,6 +84,7 @@ async function resolvePengoUrlImgs() {
       console.error(error);
     }
   }
+  return document;
 }
 
 appBodyFrame.addEventListener("click", async () => {
