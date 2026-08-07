@@ -16,25 +16,38 @@ var assets embed.FS
 
 const pengoPrefix = "/pengo/"
 
-type PengoHandler struct{}
+type PengoHandler struct {
+	app *App
+}
 
 func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    response, err := pengo.Fetch("pengo://" + strings.TrimPrefix(r.URL.Path, pengoPrefix))
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadGateway)
-        return
-    }
-    w.Header().Set("Content-Type", response.ContentType)
-    w.Write(response.Body)
+	uri := "pengo://" + strings.TrimPrefix(r.URL.Path, pengoPrefix)
+	if isNavigationRequest(r) {
+		h.app.emitNavigated(uri)
+	}
+	response, err := pengo.Fetch(uri)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadGateway)
+		return
+	}
+	w.Header().Set("Content-Type", response.ContentType)
+	w.Write(response.Body)
 }
-func pengoMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        if strings.HasPrefix(r.URL.Path, pengoPrefix) {
-            PengoHandler{}.ServeHTTP(w, r)
-            return
-        }
-        next.ServeHTTP(w, r)
-    })
+
+func isNavigationRequest(r *http.Request) bool {
+	return strings.Contains(r.Header.Get("Accept"), "text/html")
+}
+
+func pengoMiddleware(app *App) assetserver.Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasPrefix(r.URL.Path, pengoPrefix) {
+				PengoHandler{app: app}.ServeHTTP(w, r)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 
 func main() {
@@ -47,9 +60,8 @@ func main() {
 		Width:  1024,
 		Height: 768,
 		AssetServer: &assetserver.Options{
-			Assets: assets,
-			// Handler: PengoHandler{},
-			Middleware:  pengoMiddleware,
+			Assets:     assets,
+			Middleware: pengoMiddleware(app),
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,

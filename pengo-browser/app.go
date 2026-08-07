@@ -4,7 +4,11 @@ import (
 	"context"
 	"fmt"
 	"pengo-proto/pengo"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+const navigatedEvent = "pengo:navigated"
 
 // App struct
 type App struct {
@@ -31,4 +35,9 @@ func (a *App) PengoFetch(input string) (pengo.Response, error) {
 	return pengo.Fetch(input)
 }
 
-
+func (a *App) emitNavigated(uri string) {
+	if a.ctx == nil {
+		return
+	}
+	runtime.EventsEmit(a.ctx, navigatedEvent, uri)
+}

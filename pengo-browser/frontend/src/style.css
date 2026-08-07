@@ -9,11 +9,6 @@
   --content-bg: #f7f8fa;
 }
 
-.test > img {
-  max-width: 30%;
-  overflow: hidden;
-}
-
 *,
 *::before,
 *::after {

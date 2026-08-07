@@ -4,6 +4,7 @@ import { pengo } from "../wailsjs/go/models";
 import connectionErrorPage from "./pages/connection-error.html?raw";
 import wrongProtocol from "./pages/wrong-protocol.html?raw";
 import { resolveIcon } from "./services/icon.resolver";
+import { EventsOn } from "../wailsjs/runtime/runtime";
 
 let currentUrl: string;
 const appBodyFrame = document.querySelector("iframe");
@@ -12,6 +13,8 @@ document.querySelector(".search-bar-go").addEventListener("click", async () => {
     document.querySelector<HTMLInputElement>(".search-bar-input").value;
   await fetchPage();
 });
+
+EventsOn("pengo:navigated", showNavigatedUrl);
 
 function decodeHtml(response: pengo.Response): Uint8Array<ArrayBuffer> {
   const binary = atob(response.Body as unknown as string);
@@ -66,6 +69,12 @@ async function fetchPage() {
   }
   document.querySelector<HTMLInputElement>(".search-bar-input").value =
     currentUrl;
+}
+
+function showNavigatedUrl(uri: string) {
+  currentUrl = uri;
+  document.querySelector<HTMLInputElement>(".search-bar-input").value = uri;
+  resolveIcon(uri);
 }
 
 //Temp pengo:// img fetcher that converts response to a base64 src.
