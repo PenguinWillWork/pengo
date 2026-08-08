@@ -39,10 +39,11 @@ async function fetchPage() {
 
 function showNavigatedUrl(url: string) {
   const validatedUrl = validatePengoUrl(url);
+  console.log(validatedUrl);
   if (!validatedUrl.valid) {
     appBodyFrame.srcdoc =
       validatedUrl.error === "http" ? wrongProtocol : connectionErrorPage;
-    throw new Error("malformed");
+    return;
   }
 
   currentUrl = url;

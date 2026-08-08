@@ -14,6 +14,11 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+
+//go:embed frontend/src/pages/connection-error.html
+var connectionErrorPage []byte
+
+
 const pengoPrefix = "/pengo/"
 
 type PengoHandler struct {
@@ -28,6 +33,8 @@ func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	response, err := pengo.Fetch(uri)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadGateway)
+		w.WriteHeader(http.StatusBadGateway)
+		w.Write(connectionErrorPage)
 		return
 	}
 	w.Header().Set("Content-Type", response.ContentType)
