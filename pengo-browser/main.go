@@ -27,15 +27,16 @@ type PengoHandler struct {
 
 func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uri := "pengo://" + strings.TrimPrefix(r.URL.Path, pengoPrefix)
-	if isNavigationRequest(r) {
-		h.app.emitNavigated(uri)
-	}
+
 	response, err := pengo.Fetch(uri)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadGateway)
+		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusBadGateway)
 		w.Write(connectionErrorPage)
 		return
+	}
+	if isNavigationRequest(r) {
+		h.app.emitNavigated(uri)
 	}
 	w.Header().Set("Content-Type", response.ContentType)
 	w.Write(response.Body)

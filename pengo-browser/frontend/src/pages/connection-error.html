@@ -1,121 +1,129 @@
-<!-- browser-level page shown when no Pengo server answers; not wired to anything yet -->
-<div
-  style="
-    max-width: 620px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    color: #1b2636;
-    line-height: 1.65;
-  "
->
-  <div
-    style="
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #9aa2b1;
-      margin-bottom: 1.25rem;
-    "
-  >
-    pengo-browser &middot; connection
-  </div>
-
-  <svg
-    width="220"
-    height="88"
-    viewBox="0 0 220 88"
-    fill="none"
-    aria-hidden="true"
-    style="display: block; margin: 0 0 1.6rem -2px"
-  >
-    <!-- client window -->
-    <rect
-      x="1"
-      y="24"
-      width="56"
-      height="40"
-      rx="8"
-      stroke="#c9ced8"
-      stroke-width="2"
-    />
-    <path d="M1 34 H57" stroke="#dfe3e9" stroke-width="2" />
-    <circle cx="11" cy="29" r="1.6" fill="#dfe3e9" />
-    <circle cx="17" cy="29" r="1.6" fill="#dfe3e9" />
-    <circle cx="23" cy="29" r="1.6" fill="#dfe3e9" />
-
-    <!-- server -->
-    <rect
-      x="163"
-      y="24"
-      width="56"
-      height="40"
-      rx="8"
-      stroke="#c9ced8"
-      stroke-width="2"
-    />
-    <path
-      d="M175 36 H207 M175 44 H199 M175 52 H203"
-      stroke="#dfe3e9"
-      stroke-width="2"
-      stroke-linecap="round"
-    />
-
-    <!-- severed cable -->
-    <path
-      d="M57 44 H92 M128 44 H163"
-      stroke="#c9ced8"
-      stroke-width="2"
-      stroke-linecap="round"
-    />
-    <path
-      d="M104 38 L116 50 M116 38 L104 50"
-      stroke="#1b2636"
-      stroke-width="2"
-      stroke-linecap="round"
-    />
-  </svg>
-
-  <h1
-    style="
-      font-size: 1.6rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      margin: 0 0 1.1rem;
-    "
-  >
-    Can't reach that address
-  </h1>
-  <p style="margin: 0 0 1.1rem">Nothing answered at this address.</p>
-  <p style="margin: 0 0 1.6rem; color: #5b6472">
-    The penguins swam out. Nobody was home.
-  </p>
-
-  <div
-    style="
-      border-top: 1px solid #e2e5ea;
-      padding-top: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    "
-  >
-    <button
-      type="button"
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
       style="
-        height: 38px;
-        padding: 0 1.25rem;
-        border: none;
-        border-radius: 999px;
-        background-color: #1b2636;
-        color: #ffffff;
-        font-family: inherit;
-        font-weight: 600;
-        font-size: 0.85rem;
-        letter-spacing: 0.03em;
-        cursor: pointer;
+        max-width: 620px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        color: #1b2636;
+        line-height: 1.65;
       "
     >
-      retry
-    </button>
-    <span style="font-size: 0.8rem; color: #9aa2b1">pengo://&mdash;</span>
-  </div>
-</div>
+      <div
+        style="
+          font-size: 0.75rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #9aa2b1;
+          margin-bottom: 1.25rem;
+        "
+      >
+        pengo-browser &middot; connection
+      </div>
+
+      <svg
+        width="220"
+        height="88"
+        viewBox="0 0 220 88"
+        fill="none"
+        aria-hidden="true"
+        style="display: block; margin: 0 0 1.6rem -2px"
+      >
+        <!-- client window -->
+        <rect
+          x="1"
+          y="24"
+          width="56"
+          height="40"
+          rx="8"
+          stroke="#c9ced8"
+          stroke-width="2"
+        />
+        <path d="M1 34 H57" stroke="#dfe3e9" stroke-width="2" />
+        <circle cx="11" cy="29" r="1.6" fill="#dfe3e9" />
+        <circle cx="17" cy="29" r="1.6" fill="#dfe3e9" />
+        <circle cx="23" cy="29" r="1.6" fill="#dfe3e9" />
+
+        <!-- server -->
+        <rect
+          x="163"
+          y="24"
+          width="56"
+          height="40"
+          rx="8"
+          stroke="#c9ced8"
+          stroke-width="2"
+        />
+        <path
+          d="M175 36 H207 M175 44 H199 M175 52 H203"
+          stroke="#dfe3e9"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+
+        <!-- severed cable -->
+        <path
+          d="M57 44 H92 M128 44 H163"
+          stroke="#c9ced8"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <path
+          d="M104 38 L116 50 M116 38 L104 50"
+          stroke="#1b2636"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+
+      <h1
+        style="
+          font-size: 1.6rem;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          margin: 0 0 1.1rem;
+        "
+      >
+        Can't reach that address
+      </h1>
+      <p style="margin: 0 0 1.1rem">Nothing answered at this address.</p>
+      <p style="margin: 0 0 1.6rem; color: #5b6472">
+        The penguins swam out. Nobody was home.
+      </p>
+
+      <div
+        style="
+          border-top: 1px solid #e2e5ea;
+          padding-top: 1.1rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        "
+      >
+        <button
+          type="button"
+          style="
+            height: 38px;
+            padding: 0 1.25rem;
+            border: none;
+            border-radius: 999px;
+            background-color: #1b2636;
+            color: #ffffff;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+          "
+        >
+          retry
+        </button>
+        <span style="font-size: 0.8rem; color: #9aa2b1">pengo://&mdash;</span>
+      </div>
+    </div>
+  </body>
+</html>

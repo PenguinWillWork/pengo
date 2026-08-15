@@ -19,14 +19,20 @@ interface PengoUrlCheck {
   error: "http" | "malformed";
 }
 
-EventsOn("pengo:navigated", showNavigatedUrl);
+EventsOn("pengo:navigated", updateNavBarUrl);
 
 async function fetchPage() {
   const loadingSpinner = document.querySelector(".search-bar-spinner");
   resolveIcon(currentUrl);
   try {
     if (loadingSpinner) loadingSpinner.removeAttribute("hidden");
-    await showNavigatedUrl(currentUrl);
+    const validatedUrl = validatePengoUrl(currentUrl);
+    if (fallbackIfWrongUrl(validatedUrl)) {
+      return;
+    }
+    await updateNavBarUrl(currentUrl);
+    appBodyFrame.removeAttribute("srcdoc");
+    appBodyFrame.src = convertUrlForPengoHandler(currentUrl);
   } catch (error) {
     console.log(error);
     appBodyFrame.srcdoc = connectionErrorPage;
@@ -37,20 +43,18 @@ async function fetchPage() {
     currentUrl;
 }
 
-function showNavigatedUrl(url: string) {
-  const validatedUrl = validatePengoUrl(url);
-  console.log(validatedUrl);
+function fallbackIfWrongUrl(validatedUrl: PengoUrlCheck): boolean {
   if (!validatedUrl.valid) {
     appBodyFrame.srcdoc =
       validatedUrl.error === "http" ? wrongProtocol : connectionErrorPage;
-    return;
+    return true;
   }
+  return false;
+}
 
+function updateNavBarUrl(url: string) {
   currentUrl = url;
-  appBodyFrame.removeAttribute("srcdoc");
-  appBodyFrame.src = convertUrlForPengoHandler(url);
   document.querySelector<HTMLInputElement>(".search-bar-input").value = url;
-  resolveIcon(url);
 }
 
 function convertUrlForPengoHandler(url: string) {

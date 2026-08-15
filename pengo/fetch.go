@@ -31,7 +31,7 @@ func makeRequest(host string, request string) (Response, error) {
 	log.Println("requesting: " + resolvedIp + " request: " + request + "\n")
 	connection, err := net.Dial("tcp", resolvedIp)
 	if err != nil {
-		return Response{}, errors.New("Couldn't connect to the pengo server on " + resolvedIp + "\n");
+		return Response{}, err;
 	}
 	formedRequest := FormRequest(host, request)
 	connection.Write(formedRequest);
