@@ -35,9 +35,9 @@ func (a *App) PengoFetch(input string) (pengo.Response, error) {
 	return pengo.Fetch(input)
 }
 
-func (a *App) emitNavigated(uri string) {
+func (a *App) emitNavigated(uri string, title string) {
 	if a.ctx == nil {
 		return
 	}
-	runtime.EventsEmit(a.ctx, navigatedEvent, uri)
+	runtime.EventsEmit(a.ctx, navigatedEvent, uri, title)
 }

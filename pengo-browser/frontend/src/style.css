@@ -7,6 +7,8 @@
   --text: #1b2636;
   --muted: #8a93a2;
   --content-bg: #f7f8fa;
+  --strip-bg: #e7eaef;
+  --tab-hover: rgba(255, 255, 255, 0.55);
 }
 
 *,
@@ -53,6 +55,152 @@ body {
   height: 100vh;
 }
 
+/*
+  strip of background tabs — height comes from the chips' own margins, so with
+  no background tabs left the strip collapses to nothing on its own
+*/
+.tab-strip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 0.9rem;
+  background-color: var(--strip-bg);
+}
+
+/* a background tab is a chip; the active one is the address bar instead */
+.tab {
+  flex: 0 1 205px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 40px;
+  height: 32px;
+  margin: 6px 0;
+  padding: 0 0.4rem 0 0.55rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.tab:hover {
+  background-color: var(--tab-hover);
+  color: var(--text);
+}
+
+/* the chip whose page is currently on screen */
+.tab--active {
+  background-color: var(--bar-bg);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.tab-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background-color: var(--input-bg);
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  overflow: hidden;
+}
+
+.tab-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* the address bar spinner, shrunk to favicon size */
+.tab-icon--loading {
+  background: none;
+  border: 2px solid var(--bar-border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: search-bar-spin 0.7s linear infinite;
+}
+
+.tab-title {
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.tab-close {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.15s,
+    background-color 0.15s;
+}
+
+.tab:hover .tab-close,
+.active-tab .tab-close {
+  opacity: 1;
+}
+
+.tab-close:hover {
+  background-color: var(--bar-border);
+  color: var(--text);
+}
+
+/* below ~90px there is no room for a title, only icon + close */
+.tab--narrow .tab-title {
+  display: none;
+}
+
+/* new tab lives in the address bar, so the strip above can empty out completely */
+.tab-new {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.tab-new:hover {
+  background-color: var(--input-bg);
+  color: var(--text);
+}
+
 /* address bar */
 .search-bar {
   flex: 0 0 auto;
@@ -64,6 +212,54 @@ body {
   background-color: var(--bar-bg);
   border-bottom: 1px solid var(--bar-border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* the active tab is drawn as the address bar itself — icon, title and url in one pill */
+.active-tab {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  height: 40px;
+  padding: 0 0.35rem 0 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: var(--input-bg);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.active-tab:focus-within {
+  background-color: var(--bar-bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(27, 38, 54, 0.12);
+}
+
+/* page title — absent until Go reports one, like the icon's dot state */
+.active-tab-title {
+  flex: 0 1 auto;
+  max-width: 45%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.active-tab-title:empty {
+  display: none;
+}
+
+.active-tab-separator {
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+
+.active-tab-title:empty + .active-tab-separator {
+  display: none;
 }
 
 /* holder for the current site's icon — a gray dot until an icon arrives */
@@ -84,11 +280,11 @@ body {
 }
 
 .search-bar-icon--loaded {
-  width: 40px;
-  height: 40px;
-  padding: 7px;
-  border-radius: 10px;
-  background-color: var(--input-bg);
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: var(--bar-bg);
 }
 
 .search-bar-icon-image {
@@ -120,21 +316,18 @@ body {
   display: none;
 }
 
+/* url field — plain text inside the pill, which carries the border and focus ring */
 .search-bar-input {
   flex: 1 1 auto;
-  height: 38px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background-color: var(--input-bg);
-  padding: 0 1rem;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
   font-family: inherit;
   font-size: 0.95rem;
-  color: var(--text);
+  color: var(--muted);
   outline: none;
-  transition:
-    background-color 0.15s,
-    border-color 0.15s,
-    box-shadow 0.15s;
 }
 
 .search-bar-input::placeholder {
@@ -142,9 +335,7 @@ body {
 }
 
 .search-bar-input:focus {
-  background-color: var(--bar-bg);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(27, 38, 54, 0.12);
+  color: var(--text);
 }
 
 .search-bar-spinner {

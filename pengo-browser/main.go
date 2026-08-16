@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"embed"
 	"net/http"
 	"pengo-proto/pengo"
@@ -9,20 +10,38 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"golang.org/x/net/html"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
-
 //go:embed frontend/src/pages/connection-error.html
 var connectionErrorPage []byte
-
 
 const pengoPrefix = "/pengo/"
 
 type PengoHandler struct {
 	app *App
+}
+
+func getTitle(response pengo.Response) string {
+	tokenizer := html.NewTokenizer(bytes.NewReader(response.Body))
+	for {
+		tokenType := tokenizer.Next()
+		if tokenType == html.ErrorToken {
+			break
+		}
+		tokenTag, _ := tokenizer.TagName()
+		if string(tokenTag) == "title" {
+			titleNext := tokenizer.Next()
+			if titleNext == html.TextToken {
+				titleText := tokenizer.Text()				
+				return string(titleText)
+			}
+		}
+	}
+	return ""
 }
 
 func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -35,8 +54,9 @@ func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write(connectionErrorPage)
 		return
 	}
+	
 	if isNavigationRequest(r) {
-		h.app.emitNavigated(uri)
+		h.app.emitNavigated(uri, getTitle(response))
 	}
 	w.Header().Set("Content-Type", response.ContentType)
 	w.Write(response.Body)

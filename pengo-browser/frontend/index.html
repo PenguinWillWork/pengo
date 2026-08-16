@@ -7,19 +7,26 @@
   </head>
   <body>
     <div id="app">
+      <nav class="tab-strip"></nav>
       <header class="search-bar">
-        <div class="search-bar-icon">
-          <img class="search-bar-icon-image" alt="" hidden />
+        <div class="active-tab">
+          <div class="search-bar-icon">
+            <img class="search-bar-icon-image" alt="" hidden />
+          </div>
+          <span class="active-tab-title"></span>
+          <span class="active-tab-separator">·</span>
+          <input
+            class="search-bar-input"
+            type="text"
+            placeholder="pengo://home"
+            spellcheck="false"
+            autocomplete="off"
+          />
+          <div class="search-bar-spinner" hidden></div>
+          <span class="tab-close" aria-label="Close tab">&times;</span>
         </div>
-        <input
-          class="search-bar-input"
-          type="text"
-          placeholder="pengo://home"
-          spellcheck="false"
-          autocomplete="off"
-        />
-        <div class="search-bar-spinner" hidden></div>
         <button class="search-bar-go">GO</button>
+        <button class="tab-new" type="button" aria-label="New tab">+</button>
         <button
           class="search-bar-menu"
           type="button"

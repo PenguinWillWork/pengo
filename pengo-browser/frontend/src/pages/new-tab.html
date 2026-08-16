@@ -2,7 +2,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Pengo</title>
+    <title>New tab</title>
   </head>
   <body>
     <div
@@ -22,7 +22,7 @@
           margin-bottom: 1.25rem;
         "
       >
-        pengo://welcome/about
+        pengo-browser &middot; new tab
       </div>
       <h1
         style="
@@ -32,27 +32,39 @@
           margin: 0 0 1.1rem;
         "
       >
-        About
+        New tab
       </h1>
-      <p style="margin: 0 0 1.1rem">
-        A small internet written from scratch. Own protocol, own DNS, own
-        browser. No HTTP anywhere.
-      </p>
       <p style="margin: 0 0 1.6rem; color: #5b6472">
-        Lets penguins communicate
+        Type a pengo address above to get started.
       </p>
-      <div style="border-top: 1px solid #e2e5ea; padding-top: 1.1rem">
+
+      <div
+        style="
+          border-top: 1px solid #e2e5ea;
+          padding-top: 1.1rem;
+          display: flex;
+          gap: 1.5rem;
+        "
+      >
         <a
-          href="/pengo/welcome/"
+          href="/pengo/welcome"
           style="
             color: #1b2636;
             text-decoration: none;
             border-bottom: 1px solid currentColor;
           "
-          >&larr; home</a
+          >welcome &rarr;</a
+        >
+        <a
+          href="/pengo/welcome/about"
+          style="
+            color: #1b2636;
+            text-decoration: none;
+            border-bottom: 1px solid currentColor;
+          "
+          >about &rarr;</a
         >
       </div>
-      <img src="pengo://welcome/after.png" alt="" srcset="" />
     </div>
   </body>
 </html>
