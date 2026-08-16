@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"flag"
 	"log"
 	"mime"
 	"net"
@@ -87,13 +88,18 @@ func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) 
 }
 
 func main() {
+	port := flag.String("port", "2719", "port to listen on")
+	rootDir := flag.String("root", ".", "directory to serve")
+	flag.Parse()
+
 	notFoundPagePath := "/404.html";
-	root, err := os.OpenRoot("./")
+	
+	root, err := os.OpenRoot(*rootDir)          
 	
 	if err != nil {
 		log.Fatal(err)
 	}
-	listener, err := net.Listen("tcp", ":2719")
+	listener, err := net.Listen("tcp", ":"+*port)   
 	if err != nil {
 		log.Fatal(err)
 	} else {

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Daily Fishwrap</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 1.5rem 2rem 3rem;
+        background-color: #f4f1e8;
+        color: #17140f;
+        font-family: Georgia, "Times New Roman", serif;
+        line-height: 1.5;
+      }
+
+      .masthead {
+        text-align: center;
+        border-bottom: 4px double #17140f;
+        padding-bottom: 0.75rem;
+      }
+
+      .masthead h1 {
+        margin: 0;
+        font-size: 3.4rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        font-variant: small-caps;
+      }
+
+      .dateline {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #17140f;
+      }
+
+      .lead {
+        font-size: 2.1rem;
+        line-height: 1.15;
+        font-weight: 700;
+        margin: 1.6rem 0 0.4rem;
+      }
+
+      .standfirst {
+        font-style: italic;
+        color: #4a4336;
+        margin: 0 0 1.4rem;
+      }
+
+      .columns {
+        columns: 2;
+        column-gap: 2.5rem;
+        column-rule: 1px solid #d5cdb8;
+        text-align: justify;
+        hyphens: auto;
+      }
+
+      .columns p {
+        margin: 0 0 1rem;
+      }
+
+      .columns p:first-of-type::first-letter {
+        float: left;
+        font-size: 3.2rem;
+        line-height: 0.8;
+        padding: 0.1rem 0.4rem 0 0;
+        font-weight: 700;
+      }
+
+      .brief {
+        break-inside: avoid;
+        border-top: 3px solid #17140f;
+        margin-top: 1.4rem;
+        padding-top: 0.6rem;
+      }
+
+      .brief h3 {
+        margin: 0 0 0.4rem;
+        font-size: 1.05rem;
+      }
+
+      footer {
+        border-top: 1px solid #17140f;
+        margin-top: 2rem;
+        padding-top: 0.8rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      footer a {
+        color: #17140f;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="masthead">
+      <h1>The Daily Fishwrap</h1>
+    </div>
+
+    <div class="dateline">
+      <span>No. 1 &middot; South Floe Edition</span>
+      <span class="dateline-clock">&mdash;</span>
+      <span>Two Herring</span>
+    </div>
+
+    <h2 class="lead">Herring Futures Collapse After Colony Learns To Share</h2>
+    <p class="standfirst">
+      Market analysts baffled as generosity proves structurally incompatible
+      with speculation.
+    </p>
+
+    <div class="columns">
+      <p>
+        Trading on the South Floe exchange halted twice before noon yesterday
+        after a juvenile penguin, name withheld, handed a herring to a
+        neighbour without demanding one in return. The gesture, described by
+        one broker as "economically irresponsible", triggered a cascade of
+        similar behaviour across three rookeries.
+      </p>
+      <p>
+        By dusk the price of a herring had fallen from four herring to
+        approximately one herring, a figure economists concede is difficult to
+        interpret. The exchange has suspended trading pending clarification of
+        what a herring is now worth in herring.
+      </p>
+      <p>
+        Elder penguins have urged calm, noting that the colony survived the
+        Great Krill Correction of two winters ago by the simple expedient of
+        eating the disputed asset. That approach is again under consideration.
+      </p>
+      <p>
+        A spokesbird for the exchange said the floor would reopen once someone
+        could explain the situation slowly and with fish.
+      </p>
+
+      <div class="brief">
+        <h3>Also inside</h3>
+        <p>
+          Ice declared "adequate" for third consecutive season. Sliding on
+          belly still fastest route to anywhere, study confirms. Local
+          skua remains unwelcome.
+        </p>
+      </div>
+    </div>
+
+    <footer>
+      Printed on the Pengo protocol &middot;
+      <a href="/pengo/welcome">pengo://welcome</a>
+    </footer>
+
+    <script>
+      // live dateline — proof that scripts run inside the sandboxed frame
+      const clock = document.querySelector(".dateline-clock");
+
+      function updateDateline() {
+        clock.textContent = new Date().toLocaleString();
+      }
+
+      updateDateline();
+      setInterval(updateDateline, 1000);
+    </script>
+  </body>
+</html>
