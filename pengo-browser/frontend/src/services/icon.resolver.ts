@@ -1,7 +1,12 @@
 import { PengoFetch } from "../../wailsjs/go/main/App";
 import { pengo } from "../../wailsjs/go/models";
 
-export async function resolveIcon(currentLocation: string) {
+/**
+ * Fetches favicon.ico, if not found - generates a placeholder icon taking the first letter of the hostname
+ * @param src src for which we are resolving the icon
+ * @returns void
+ */
+export async function resolveIcon(src: string) {
   const iconContainer =
     document.querySelector<HTMLDivElement>(".search-bar-icon");
   iconContainer.classList.remove("search-bar-icon--loaded");
@@ -24,12 +29,12 @@ export async function resolveIcon(currentLocation: string) {
   }
 
   try {
-    const iconUrl = new URL("/favicon.ico", currentLocation).href;
+    const iconUrl = new URL("/favicon.ico", src).href;
     const iconResponse = await PengoFetch(iconUrl);
     applySiteIcon(iconResponse, iconImg, iconContainer);
   } catch (error) {
     console.log(error);
-    generatePlaceholderIcon(currentLocation);
+    generatePlaceholderIcon(src);
   }
 }
 

@@ -36,9 +36,12 @@ EventsOn("pengo:navigated", onNavigated);
 function onNavigated(src: string, title: string) {
   updateTabData({ title, src });
   updateActiveTab();
-  updateNavBarUrl(src);
+  updateSeachbarUrl(src);
 }
 
+// Address-bar and tab navigation: points the iframe at /pengo/…, which the
+// middleware intercepts and translates into a Pengo protocol request.
+// Links clicked inside the page bypass this and hit the handler directly.
 async function fetchPage() {
   if (!currentUrl) {
     appBodyFrame.srcdoc = newTabPage;
@@ -53,7 +56,7 @@ async function fetchPage() {
     if (fallbackIfWrongUrl(validatedUrl)) {
       return;
     }
-    await updateNavBarUrl(currentUrl);
+    await updateSeachbarUrl(currentUrl);
     appBodyFrame.removeAttribute("srcdoc");
     appBodyFrame.src = convertUrlForPengoHandler(currentUrl);
   } catch (error) {
@@ -66,6 +69,7 @@ async function fetchPage() {
     currentUrl;
 }
 
+//Falls back to built-in error pages in case something is obviosly not right, e.g http, wrong format of the url etc.
 function fallbackIfWrongUrl(validatedUrl: PengoUrlCheck): boolean {
   if (!validatedUrl.valid) {
     appBodyFrame.srcdoc =
@@ -77,16 +81,19 @@ function fallbackIfWrongUrl(validatedUrl: PengoUrlCheck): boolean {
   return false;
 }
 
-function updateNavBarUrl(url: string) {
+//Updates search bar url, for example on opening a hyperlink
+function updateSeachbarUrl(url: string) {
   currentUrl = url;
   document.querySelector<HTMLInputElement>(".search-bar-input").value = url;
 }
 
+//iframe eats /pengo/[something], user enters a pengo:// url, this function converts it so pengo handler can work with it
 function convertUrlForPengoHandler(url: string) {
   const pengoProtocolConverted = url.replace("pengo://", "/pengo/");
   return pengoProtocolConverted;
 }
 
+//Creates tab, sets it as active, displays it ("new tab" page by default)
 function createTab() {
   const newTab = new Tab({ title: null, src: null });
   tabs.push(newTab);
@@ -101,6 +108,7 @@ function createTab() {
   displayActiveTab();
 }
 
+//Attach event listeners for tab click and tab "x" button click
 function attachEventListenersToTab(tab: HTMLElement) {
   tab.addEventListener("click", () => {
     const tabId = tab.getAttribute("tab-id");
@@ -114,6 +122,7 @@ function attachEventListenersToTab(tab: HTMLElement) {
   });
 }
 
+//Builds a tab element from a template in the tab nav area
 function buildTabElement(): HTMLElement {
   const element = tabTemplate.content.firstElementChild.cloneNode(
     true,
@@ -122,6 +131,7 @@ function buildTabElement(): HTMLElement {
   return element;
 }
 
+//On create appends the id to the tab-id attribute of the new tab. Id is generated in the tab class on init
 function assignNewTabId(tabStrip: Element) {
   const tabElements = tabStrip.querySelectorAll(".tab");
   for (const tabElement of tabElements) {
@@ -131,11 +141,14 @@ function assignNewTabId(tabStrip: Element) {
   }
 }
 
+//Sets current url to activetab src and fetches it
+//In the future: pages that were already fetched have to be cached
 function displayActiveTab() {
   currentUrl = activeTab.getSrc();
   fetchPage();
 }
 
+//Destroys a tab and handles the switch afterwards. Triggers on "x"
 function destroyTab(tabId: string) {
   const tabToDestroy = tabs.find((t) => t.id == tabId);
   const tabElements = document.querySelectorAll(".tab");
@@ -160,6 +173,8 @@ function destroyTab(tabId: string) {
     return;
   }
 }
+
+//Updates tab data: title, src, icon in the future, then updates active tabs
 function updateTabData(updateTabData?: ITabCreate) {
   activeTab.title = updateTabData.title;
   activeTab.src = updateTabData.src;
@@ -167,6 +182,7 @@ function updateTabData(updateTabData?: ITabCreate) {
   updateActiveTab();
 }
 
+//Updates active tab in case there was a switch, a tab close or other changes requiring to set and re-render active
 async function updateActiveTab() {
   const tabElements = document.querySelectorAll(".tab");
   for (const tabElement of tabElements) {
