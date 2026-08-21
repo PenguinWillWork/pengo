@@ -10,7 +10,8 @@ import (
 
 func main() {
 	reader := bufio.NewReader(os.Stdin);
-	fmt.Println("Enter pengo URI:");
+	fmt.Fprint(os.Stderr, "Welcome to Pengo client!\n")
+	fmt.Print("pengo> ");
 	input, err := reader.ReadString('\n');
 	if err != nil {
 		log.Println(err);
@@ -21,5 +22,5 @@ func main() {
 		fmt.Print(err)
 		return;
 	}
-	fmt.Print(response.Version + "\n" + response.Status + "\n" + response.Body + "\n")
+	fmt.Print(response.Version + "\n" + response.Status + "\n" + string(response.Body) + "\n")
 }

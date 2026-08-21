@@ -10,7 +10,7 @@ import (
 )
 
 func Fetch(input string) (Response, error) {
-	host, reqPath, err := parseUserInput(input);
+	host, reqPath, err := parseInput(input);
 	if err != nil {
 		return Response{}, err;
 	}
@@ -43,7 +43,12 @@ func makeRequest(host string, request string) (Response, error) {
 	return parsedResponse, nil;
 }
 
-func parseUserInput(input string) (host string, request string, err error){
+// pengo://joe/about  ->  host "joe", path "/about"
+//   normalizedInput     pengo://joe/about
+//   proto               pengo
+//   inputWithoutProto   joe/about
+//   uriBody             ["joe" "about"]
+func parseInput(input string) (host string, request string, err error){
 	normalizedInput := strings.TrimSpace(strings.ToLower(input));
 	proto := strings.Split(normalizedInput, "://")[0];
 	inputWithoutProto := strings.Replace(normalizedInput, proto + "://", "", -1);
