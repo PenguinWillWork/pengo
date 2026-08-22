@@ -17,7 +17,13 @@ func main() {
 		log.Println(err);
 	}
 
-	response, err := pengo.Fetch(input)
+	method, host, reqPath, headers, err := parseInput(input)
+	if err != nil {
+		fmt.Print(err)
+		return;
+	}
+
+	response, err := pengo.Fetch(method, host, reqPath, headers)
 	if err != nil {
 		fmt.Print(err)
 		return;

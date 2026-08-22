@@ -20,6 +20,7 @@ var assets embed.FS
 var connectionErrorPage []byte
 
 const pengoPrefix = "/pengo/"
+const pengoScheme = "pengo://"
 
 type PengoHandler struct {
 	app *App
@@ -45,9 +46,9 @@ func getTitle(response pengo.Response) string {
 }
 
 func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	uri := "pengo://" + strings.TrimPrefix(r.URL.Path, pengoPrefix)
-
-	response, err := pengo.Fetch(uri)
+	host, requestPath := splitHostAndPath(strings.TrimPrefix(r.URL.Path, pengoPrefix))
+	requestUri := "pengo://" + strings.TrimPrefix(r.URL.Path, pengoPrefix)
+	response, err := pengo.Fetch("fetch", host, requestPath, nil)
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusBadGateway)
@@ -56,10 +57,22 @@ func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	if isNavigationRequest(r) {
-		h.app.emitNavigated(uri, getTitle(response))
+		//trigger an event to get navigated data in frontend
+		h.app.emitNavigated(requestUri, getTitle(response))
 	}
 	w.Header().Set("Content-Type", response.ContentType)
 	w.Write(response.Body)
+}
+
+// "welcome/about"  ->  host "welcome", path "/about"
+func splitHostAndPath(hostAndPath string) (host string, requestPath string) {
+	uriBody := strings.SplitN(hostAndPath, "/", 2)
+	host = uriBody[0]
+	requestPath = "/"
+	if len(uriBody) > 1 && uriBody[1] != "" {
+		requestPath = "/" + uriBody[1]
+	}
+	return host, requestPath
 }
 
 func isNavigationRequest(r *http.Request) bool {
