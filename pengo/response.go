@@ -2,6 +2,7 @@ package pengo
 
 import (
 	"errors"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -31,6 +32,8 @@ func MakeResponse(status string, contentType string, body []byte) []byte {
 }
 
 func ParseResponse(response string) (parsedResponse Response, err error) {
+	log.Println("parsing response: " + response)
+
 	//separating head from the body
 	head, body, found := strings.Cut(response, "\n\n");
 

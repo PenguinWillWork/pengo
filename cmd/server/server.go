@@ -59,11 +59,15 @@ func notFoundResponse(connection net.Conn, notFoundPath *string, root *os.Root) 
 func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) {
 	defer connection.Close()
 	reader := bufio.NewReader(connection)
-	request, err := pengo.ParseRequest(reader) 
+	request, err := pengo.ParseRequest(reader)
+
 	if err != nil {
-		return
+		log.Println("Error parsing request: " + err.Error())
+		serverErrorResponse(connection, err)
+		return;
 	}
 
+	log.Println("Received request: " + request.Method + " " + request.RequestPath + " " + request.Host)
 	var response []byte
 	if request.RequestPath == "/" {
 		request.RequestPath = "/index";

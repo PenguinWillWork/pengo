@@ -16,6 +16,7 @@ func resolveDnsRequest(connection net.Conn, registry map[string]string) {
 
 	reader := bufio.NewReader(connection)
 	input, err := reader.ReadString('\n')
+	log.Println(requester + " sent request: " + input)
 	if err != nil {
 		log.Println(requester + " sent an unreadable request: " + err.Error())
 		return

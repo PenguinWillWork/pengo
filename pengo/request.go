@@ -3,43 +3,59 @@ package pengo
 import (
 	"bufio"
 	"errors"
+	"log"
 	"strings"
 )
 
 type Request struct {
 	Version string
+	Method string
 	RequestPath string
 	Host string
+	Headers *[]string
 }
 
-func FormRequest(host string, requestPath string) []byte {
+func FormRequest(method string, host string, headers []string, requestPath string) []byte {
 	version := "PENGO/1.0";
-	request := version + "\n\n" + requestPath + "\n" + "Host:" + host + "\n"
+	request := version + " " + method + " " + requestPath + " " + host + "\n" + strings.Join(headers, "\n") + "\n\n";
 	return []byte(request)
 }
 
 func ParseRequest(reader *bufio.Reader) (Request, error) {
 	request := readRequestInput(reader)
-	version, data, found := strings.Cut(request, "\n\n");
-	requestData := strings.Split(data, "\n")
-	if !found || !strings.Contains(version,"PENGO") || len(requestData) != 2 {
+	log.Println("request: " + request)
+	splitRequest := strings.Split(request, "\n")
+	splitMainLine := strings.Split(splitRequest[0], " ")
+	version := splitMainLine[0]
+	method := splitMainLine[1]
+	requestPath := splitMainLine[2]
+	host := splitMainLine[3]
+	if !strings.Contains(version,"PENGO") || method == "" || requestPath == "" || host == "" {
 		return Request{}, errors.New("The request we got from the client is malformed")
 	}
-	if (requestData[1] == "") {
-		requestData[1] = "/"	
-	}
-	return Request{version, requestData[0], requestData[1]}, nil
+	headers := splitRequest[1:len(splitRequest)-2]
+	return Request{version, method, requestPath, host, &headers}, nil
 }
 
 func readRequestInput(reader *bufio.Reader) string {
 	var request strings.Builder
-	for i := 0; i < 3; i++ {
-		line, err := reader.ReadString('\n')
+	line, err := reader.ReadString('\n')
+	newLineCount := 0
+	for true {
+		line, err = reader.ReadString('\n')
+		if line == "\n" {
+			newLineCount++
+		} else {
+			newLineCount = 0
+		}
+		if newLineCount == 2 {
+			break
+		}
 		if err != nil {
-				return ""
+			return ""
 		}
 		request.WriteString(line)
 	}
 	requestAsString := request.String()
-	return requestAsString 
+	return requestAsString
 }

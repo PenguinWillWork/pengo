@@ -10,11 +10,12 @@ import (
 )
 
 func Fetch(input string) (Response, error) {
-	host, reqPath, err := parseInput(input);
+	method, host, reqPath, headers, err := parseInput(input);
 	if err != nil {
 		return Response{}, err;
 	}
-	response, err := makeRequest(host, reqPath)
+	log.Println("method: " + method + " host: " + host + " request path: " + reqPath + " headers: " + strings.Join(headers, ","))
+	response, err := makeRequest(method, host, reqPath, headers)
 	if err != nil {
 		return Response{}, err;
 	}
@@ -23,17 +24,16 @@ func Fetch(input string) (Response, error) {
 
 
 
-func makeRequest(host string, request string) (Response, error) {
+func makeRequest(method string, host string, request string, headers []string) (Response, error) {
 	resolvedIp, err := resolver.Resolve(host);
 	if err != nil {
 		return Response{}, err;
 	}
-	log.Println("requesting: " + resolvedIp + " request: " + request + "\n")
 	connection, err := net.Dial("tcp", resolvedIp)
 	if err != nil {
 		return Response{}, err;
 	}
-	formedRequest := FormRequest(host, request)
+	formedRequest := FormRequest(method, host, headers, request)
 	connection.Write(formedRequest);
 	response, err := io.ReadAll(connection);
 	parsedResponse, err := ParseResponse(string(response));
@@ -48,20 +48,41 @@ func makeRequest(host string, request string) (Response, error) {
 //   proto               pengo
 //   inputWithoutProto   joe/about
 //   uriBody             ["joe" "about"]
-func parseInput(input string) (host string, request string, err error){
+func parseInput(input string) (method string, host string, request string, headers []string, err error ) {
 	normalizedInput := strings.TrimSpace(strings.ToLower(input));
-	proto := strings.Split(normalizedInput, "://")[0];
-	inputWithoutProto := strings.Replace(normalizedInput, proto + "://", "", -1);
-	if (proto != "pengo") {
-		err := "Requested URI is not a Pengo URI";
-		return "", "", errors.New(err);
+	if !strings.Contains(normalizedInput, "headers:[") {
+		return "", "", "", nil, errors.New("Invalid input format: missing headers")
+	}
+	splitInput := strings.Split(normalizedInput, " headers:");
+	if len(splitInput) < 1 {
+		return "", "", "", nil, errors.New("Invalid input format")
+	}
+	if len(splitInput) > 1 {
+		splitInput[1] = strings.TrimSpace(strings.TrimPrefix(splitInput[1], "["));
+		splitInput[1] = strings.TrimSpace(strings.TrimSuffix(splitInput[1], "]"));
+		headers = strings.Split(splitInput[1], ",");
+	}
+		host = strings.Split(splitInput[0], " ")[1];
+	splitInput[0] = strings.TrimSpace(splitInput[0]);
+	method = strings.Split(splitInput[0], " ")[0];
+	if method != "fetch" && method != "submit" {
+		return "", "", "", nil, errors.New("Invalid method")
 	}
 
-	uriBody := strings.SplitN(inputWithoutProto, "/", 2);
+	proto := strings.Split(host, "://")[0];
+	hostWithoutProto := strings.Replace(host, proto + "://", "", -1);
+	if (proto != "pengo") {
+		err := "Requested URI is not a Pengo URI";
+		return "", "", "", nil,errors.New(err);
+	}
+
+	uriBody := strings.SplitN(hostWithoutProto, "/", 2);
 	hostFromUri := uriBody[0];
 	path := "/";
 	if len(uriBody) > 1 && uriBody[1] != "" {
 		path = "/" + uriBody[1];
 	}
-	return hostFromUri, path, nil;
+	return method, hostFromUri, path, headers, nil;
 }
+
+//FETCH pengo://joe/about headers:[PebblePublicKey: abc123, PebbleTimestamp: 1234567890, PebbleNonce: 123456, PebbleSignature: def456] 
