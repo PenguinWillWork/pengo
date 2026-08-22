@@ -15,52 +15,59 @@ type Request struct {
 	Headers *[]string
 }
 
+//PENGO/1.0 fetch / welcome
+//pebblepublickey: abc123
+//pebbletimestamp: 1234567890
+//pebblenonce: 123456
+//pebblesignature: def456
 func FormRequest(method string, host string, headers []string, requestPath string) []byte {
-	version := "PENGO/1.0";
-	request := version + " " + method + " " + requestPath + " " + host + "\n" + strings.Join(headers, "\n") + "\n\n";
+	version := "PENGO/1.0"
+	request := version + " " + method + " " + host + " "  + requestPath + "\n"
+	if len(headers) > 0 {
+		for _, h := range headers {
+			strings.TrimSpace(h)
+		}
+		request += strings.Join(headers, "\n") + "\n"
+	}
+	request += "\n"
 	return []byte(request)
 }
 
 func ParseRequest(reader *bufio.Reader) (Request, error) {
+	parsedRequest := Request{}
+
 	request := readRequestInput(reader)
 	log.Println("request: " + request)
 	splitRequest := strings.Split(request, "\n")
 	splitMainLine := strings.Split(splitRequest[0], " ")
-	version := splitMainLine[0]
-	method := splitMainLine[1]
-	requestPath := splitMainLine[2]
-	host := splitMainLine[3]
-	if !strings.Contains(version,"PENGO") || method == "" || requestPath == "" || host == "" {
+
+	parsedRequest.Version = splitMainLine[0]
+	parsedRequest.Method = splitMainLine[1]
+	parsedRequest.RequestPath = splitMainLine[2]
+	parsedRequest.Host = splitMainLine[3]
+
+	if !strings.Contains(parsedRequest.Version,"PENGO") || parsedRequest.Method == "" || parsedRequest.RequestPath == "" || parsedRequest.Host == "" {
 		return Request{}, errors.New("The request we got from the client is malformed")
 	}
 	headers := splitRequest[1:len(splitRequest)-2]
-	return Request{version, method, requestPath, host, &headers}, nil
+	parsedRequest.Headers = &headers
+	return parsedRequest, nil
 }
 
 func readRequestInput(reader *bufio.Reader) string {
 	var request strings.Builder
-	line, err := reader.ReadString('\n')
-	if err != nil {
-		log.Println("Error reading request line: " + err.Error())
-		return ""
-	}
-	request.WriteString(line)
+	for {
+		line, err := reader.ReadString('\n')
 
-	newLineCount := 0
-	for true {
-		line, err = reader.ReadString('\n')
-		if line == "\n" {
-			newLineCount++
-		} else {
-			newLineCount = 0
-		}
-		if newLineCount == 2 {
-			break
-		}
+
 		if err != nil {
 			return ""
 		}
 		request.WriteString(line)
+
+		if strings.HasSuffix(request.String(), "\n\n") {
+			break
+		}
 	}
 	requestAsString := request.String()
 	return requestAsString

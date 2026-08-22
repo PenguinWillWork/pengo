@@ -43,11 +43,7 @@ func makeRequest(method string, host string, request string, headers []string) (
 	return parsedResponse, nil;
 }
 
-// pengo://joe/about  ->  host "joe", path "/about"
-//   normalizedInput     pengo://joe/about
-//   proto               pengo
-//   inputWithoutProto   joe/about
-//   uriBody             ["joe" "about"]
+//FETCH pengo://joe/about headers:[PebblePublicKey: abc123, PebbleTimestamp: 1234567890, PebbleNonce: 123456, PebbleSignature: def456] 
 func parseInput(input string) (method string, host string, request string, headers []string, err error ) {
 	normalizedInput := strings.TrimSpace(strings.ToLower(input));
 	if !strings.Contains(normalizedInput, "headers:[") {
@@ -84,5 +80,3 @@ func parseInput(input string) (method string, host string, request string, heade
 	}
 	return method, hostFromUri, path, headers, nil;
 }
-
-//FETCH pengo://joe/about headers:[PebblePublicKey: abc123, PebbleTimestamp: 1234567890, PebbleNonce: 123456, PebbleSignature: def456] 
