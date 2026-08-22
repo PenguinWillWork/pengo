@@ -40,6 +40,12 @@ func ParseRequest(reader *bufio.Reader) (Request, error) {
 func readRequestInput(reader *bufio.Reader) string {
 	var request strings.Builder
 	line, err := reader.ReadString('\n')
+	if err != nil {
+		log.Println("Error reading request line: " + err.Error())
+		return ""
+	}
+	request.WriteString(line)
+
 	newLineCount := 0
 	for true {
 		line, err = reader.ReadString('\n')

@@ -51,11 +51,11 @@ func makeRequest(method string, host string, request string, headers []string) (
 func parseInput(input string) (method string, host string, request string, headers []string, err error ) {
 	normalizedInput := strings.TrimSpace(strings.ToLower(input));
 	if !strings.Contains(normalizedInput, "headers:[") {
-		return "", "", "", nil, errors.New("Invalid input format: missing headers")
+		return "", "", "", nil, errors.New("Invalid input format: missing headers\n")
 	}
 	splitInput := strings.Split(normalizedInput, " headers:");
 	if len(splitInput) < 1 {
-		return "", "", "", nil, errors.New("Invalid input format")
+		return "", "", "", nil, errors.New("Invalid input format\n")
 	}
 	if len(splitInput) > 1 {
 		splitInput[1] = strings.TrimSpace(strings.TrimPrefix(splitInput[1], "["));
@@ -66,13 +66,13 @@ func parseInput(input string) (method string, host string, request string, heade
 	splitInput[0] = strings.TrimSpace(splitInput[0]);
 	method = strings.Split(splitInput[0], " ")[0];
 	if method != "fetch" && method != "submit" {
-		return "", "", "", nil, errors.New("Invalid method")
+		return "", "", "", nil, errors.New("Invalid method\n")
 	}
 
 	proto := strings.Split(host, "://")[0];
 	hostWithoutProto := strings.Replace(host, proto + "://", "", -1);
 	if (proto != "pengo") {
-		err := "Requested URI is not a Pengo URI";
+		err := "Requested URI is not a Pengo URI\n";
 		return "", "", "", nil,errors.New(err);
 	}
 
