@@ -17,7 +17,7 @@ func fileExists(path string, root *os.Root) bool {
 	return err == nil
 }
 
-
+//resolve file extension for request path, if no extension is found, try to resolve with .html extension
 func resolveExtension(input string, root *os.Root) (string, contentType string, err error) {
 	if fileExists(input, root) {
 		return input, mime.TypeByExtension(filepath.Ext(input)), nil
@@ -30,6 +30,12 @@ func resolveExtension(input string, root *os.Root) (string, contentType string, 
 
 func serverErrorResponse(connection net.Conn, err error) {
 	response := pengo.MakeResponse(pengo.StatusInternalServerError, "text", []byte("Internal Server Error"))
+	connection.Write([]byte(response))
+	return;
+}
+
+func requestMalformedResponse(connection net.Conn, err error) {
+	response := pengo.MakeResponse(pengo.StatusBadRequest, "text", []byte("Bad Request"))
 	connection.Write([]byte(response))
 	return;
 }
@@ -51,24 +57,11 @@ func notFoundResponse(connection net.Conn, notFoundPath *string, root *os.Root) 
 		".html",
 		notFoundContent,
 	)
-	log.Println(response)
-	connection.Write([]byte(response))
+	connection.Write(response)
 	return;
 }
 
-func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) {
-	defer connection.Close()
-	reader := bufio.NewReader(connection)
-	request, err := pengo.ParseRequest(reader)
-
-	if err != nil {
-		log.Println("Error parsing request: " + err.Error())
-		serverErrorResponse(connection, err)
-		return;
-	}
-
-	log.Println("Received request: " + request.Method + " " + request.RequestPath + " " + request.Host)
-	var response []byte
+func handleFetchRequest(connection net.Conn, notFoundPath *string, root *os.Root, request *pengo.Request) ([]byte, error) {
 	if request.RequestPath == "/" {
 		request.RequestPath = "/index";
 	}
@@ -80,14 +73,39 @@ func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) 
 
 	if len(content) == 0 {
 		notFoundResponse(connection, notFoundPath, root)
-		return;
+		return []byte{}, errors.New("File not found")
 	}
     if err != nil {
 		serverErrorResponse(connection, err);
+		return []byte{}, err;
+	}
+	response := pengo.MakeResponse(pengo.StatusOK, contentType, content)
+	return response, nil;
+}
+
+
+func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) {
+	defer connection.Close()
+	reader := bufio.NewReader(connection)
+	request, err := pengo.ParseRequest(reader)
+
+	if err != nil || request.Method != "fetch" && request.Method != "submit" {
+		log.Println("Error parsing request: " + err.Error())
+		requestMalformedResponse(connection, err)
 		return;
 	}
-	response = pengo.MakeResponse(pengo.StatusOK, contentType, content)
-	// log.Println(contentType)
+
+	var response []byte
+	switch request.Method {
+		case "fetch":
+			response, err = handleFetchRequest(connection, notFoundPath, root, &request)
+			if err != nil {
+				log.Println("Error handling fetch request: " + err.Error())
+				return;
+			}
+		case "submit":
+			log.Println("Submit method not implemented yet")		
+	}
 	connection.Write([]byte(response))
 }
 
