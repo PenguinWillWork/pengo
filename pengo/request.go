@@ -42,9 +42,9 @@ func ParseRequest(reader *bufio.Reader) (Request, error) {
 	splitMainLine := strings.Split(splitRequest[0], " ")
 
 	parsedRequest.Version = splitMainLine[0]
+	parsedRequest.RequestPath = splitMainLine[3]
 	parsedRequest.Method = splitMainLine[1]
-	parsedRequest.RequestPath = splitMainLine[2]
-	parsedRequest.Host = splitMainLine[3]
+	parsedRequest.Host = splitMainLine[2]
 
 	if !strings.Contains(parsedRequest.Version,"PENGO") || parsedRequest.Method == "" || parsedRequest.RequestPath == "" || parsedRequest.Host == "" {
 		return Request{}, errors.New("The request we got from the client is malformed")
