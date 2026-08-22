@@ -1,5 +1,5 @@
 import { PengoFetch } from "../../wailsjs/go/main/App";
-import { pengo } from "../../wailsjs/go/models";
+import { protocol } from "../../wailsjs/go/models";
 
 /**
  * Fetches favicon.ico, if not found - generates a placeholder icon taking the first letter of the hostname
@@ -39,7 +39,7 @@ export async function resolveIcon(src: string) {
 }
 
 function applySiteIcon(
-  iconResponse: pengo.Response,
+  iconResponse: protocol.Response,
   iconImg: HTMLImageElement,
   iconContainer: HTMLDivElement,
 ) {

@@ -1,9 +1,9 @@
-package pengo
+package protocol
 
 import (
 	"io"
 	"net"
-	"pengo-proto/resolver"
+	"pengo/resolver"
 )
 
 func Fetch(method string, host string, reqPath string, headers []string) (Response, error) {

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"pengo-proto/pengo"
+	"pengo/protocol"
 	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -33,9 +33,9 @@ func (a *App) Greet(name string) string {
 }
 
 // Frontend entry point: takes a pengo:// uri, e.g. pengo://welcome/favicon.ico
-func (a *App) PengoFetch(input string) (pengo.Response, error) {
+func (a *App) PengoFetch(input string) (protocol.Response, error) {
 	host, requestPath := splitHostAndPath(strings.TrimPrefix(input, pengoScheme))
-	return pengo.Fetch("fetch", host, requestPath, nil)
+	return protocol.Fetch("fetch", host, requestPath, nil)
 }
 
 func (a *App) emitNavigated(uri string, title string) {

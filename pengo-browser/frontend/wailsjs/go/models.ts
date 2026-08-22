@@ -1,4 +1,4 @@
-export namespace pengo {
+export namespace protocol {
 	
 	export class Response {
 	    Version: string;

@@ -1,6 +1,5 @@
 import "./style.css";
 import { PengoFetch } from "../wailsjs/go/main/App";
-import { pengo } from "../wailsjs/go/models";
 import { resolveIcon } from "./services/icon.resolver";
 import { EventsOn } from "../wailsjs/runtime/runtime";
 import { ITabCreate, Tab } from "./services/tabs";

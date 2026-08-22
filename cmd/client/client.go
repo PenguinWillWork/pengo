@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"pengo-proto/pengo"
+	"pengo/protocol"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 		return;
 	}
 
-	response, err := pengo.Fetch(method, host, reqPath, headers)
+	response, err := protocol.Fetch(method, host, reqPath, headers)
 	if err != nil {
 		fmt.Print(err)
 		return;

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"net/http"
-	"pengo-proto/pengo"
+	"pengo/protocol"
 	"strings"
 
 	"github.com/wailsapp/wails/v2"
@@ -26,7 +26,7 @@ type PengoHandler struct {
 	app *App
 }
 
-func getTitle(response pengo.Response) string {
+func getTitle(response protocol.Response) string {
 	tokenizer := html.NewTokenizer(bytes.NewReader(response.Body))
 	for {
 		tokenType := tokenizer.Next()
@@ -48,7 +48,7 @@ func getTitle(response pengo.Response) string {
 func (h PengoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	host, requestPath := splitHostAndPath(strings.TrimPrefix(r.URL.Path, pengoPrefix))
 	requestUri := "pengo://" + strings.TrimPrefix(r.URL.Path, pengoPrefix)
-	response, err := pengo.Fetch("fetch", host, requestPath, nil)
+	response, err := protocol.Fetch("fetch", host, requestPath, nil)
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusBadGateway)

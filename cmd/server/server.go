@@ -9,7 +9,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"pengo-proto/pengo"
+	"pengo/protocol"
 )
 
 func fileExists(path string, root *os.Root) bool {
@@ -29,13 +29,13 @@ func resolveExtension(input string, root *os.Root) (string, contentType string, 
 }
 
 func serverErrorResponse(connection net.Conn, err error) {
-	response := pengo.MakeResponse(pengo.StatusInternalServerError, "text", []byte("Internal Server Error"))
+	response := protocol.MakeResponse(protocol.StatusInternalServerError, "text", []byte("Internal Server Error"))
 	connection.Write([]byte(response))
 	return;
 }
 
 func requestMalformedResponse(connection net.Conn, err error) {
-	response := pengo.MakeResponse(pengo.StatusBadRequest, "text", []byte("Bad Request"))
+	response := protocol.MakeResponse(protocol.StatusBadRequest, "text", []byte("Bad Request"))
 	connection.Write([]byte(response))
 	return;
 }
@@ -52,8 +52,8 @@ func notFoundResponse(connection net.Conn, notFoundPath *string, root *os.Root) 
 		}
 	}
 
-	response := pengo.MakeResponse(
-		pengo.StatusNotFound,
+	response := protocol.MakeResponse(
+		protocol.StatusNotFound,
 		".html",
 		notFoundContent,
 	)
@@ -61,7 +61,7 @@ func notFoundResponse(connection net.Conn, notFoundPath *string, root *os.Root) 
 	return;
 }
 
-func handleFetchRequest(connection net.Conn, notFoundPath *string, root *os.Root, request *pengo.Request) ([]byte, error) {
+func handleFetchRequest(connection net.Conn, notFoundPath *string, root *os.Root, request *protocol.Request) ([]byte, error) {
 	if request.RequestPath == "/" {
 		request.RequestPath = "/index";
 	}
@@ -79,7 +79,7 @@ func handleFetchRequest(connection net.Conn, notFoundPath *string, root *os.Root
 		serverErrorResponse(connection, err);
 		return []byte{}, err;
 	}
-	response := pengo.MakeResponse(pengo.StatusOK, contentType, content)
+	response := protocol.MakeResponse(protocol.StatusOK, contentType, content)
 	return response, nil;
 }
 
@@ -87,7 +87,7 @@ func handleFetchRequest(connection net.Conn, notFoundPath *string, root *os.Root
 func handleConnection(connection net.Conn, notFoundPath *string, root *os.Root) {
 	defer connection.Close()
 	reader := bufio.NewReader(connection)
-	request, err := pengo.ParseRequest(reader)
+	request, err := protocol.ParseRequest(reader)
 
 	if err != nil || request.Method != "fetch" && request.Method != "submit" {
 		log.Println("Error parsing request: " + err.Error())

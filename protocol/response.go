@@ -1,4 +1,4 @@
-package pengo
+package protocol
 
 import (
 	"errors"
